@@ -1,5 +1,35 @@
-# Object file
-*.o
+# ------------------------------------------------------------------ Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.iml
+.idea/
+.vscode/
+**/generated_plugin_registrant.dart
+**/generated_plugins.cmake
+*.lock.bak
 
-# Ada Library Information
-*.ali
+# ------------------------------------------------------------------- credentials
+# A Firebase *web* config is public by design, but the Android/iOS app config and
+# anything service-account shaped must never be committed.
+app/android/app/google-services.json
+app/ios/Runner/GoogleService-Info.plist
+app/lib/firebase_options.dart
+app/android/key.properties
+*.jks
+*.keystore
+*-adminsdk-*.json
+service-account*.json
+.env
+.env.*
+
+# ------------------------------------------------------------------- generated
+app/tools/seed/__pycache__/
+__pycache__/
+*.pyc
+
+# -------------------------------------------------------------------------- OS
+.DS_Store
+Thumbs.db

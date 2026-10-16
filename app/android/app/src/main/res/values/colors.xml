@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches AppTheme.seed so the native launch screen and the Flutter splash
+         look like one continuous screen. -->
+    <color name="edulanka_background">#F7F9F8</color>
+</resources>

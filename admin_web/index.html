@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EduLanka Admin</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%2300695c'/><text y='68' x='50' font-size='52' text-anchor='middle'>📚</text></svg>" />
+</head>
+<body>
+
+<!-- ------------------------------------------------------------------ header -->
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">📚</span>
+    <div>
+      <h1>EduLanka Admin</h1>
+      <p id="projectLine">Not connected</p>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <span id="connectionBadge" class="badge badge-muted">offline</span>
+    <button id="signOutBtn" class="btn btn-ghost" hidden>Sign out</button>
+    <button id="settingsBtn" class="btn btn-ghost">⚙︎ Setup</button>
+  </div>
+</header>
+
+<main>
+  <!-- ------------------------------------------------------------- setup card -->
+  <section id="setupCard" class="card" hidden>
+    <h2>1 · Connect your Firebase project</h2>
+    <p class="muted">
+      Everything is free (Spark plan). Create a project at
+      <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a>,
+      add a <strong>Web app</strong>, then paste the config object it shows you below.
+      It is stored in this browser only (<code>localStorage</code>) — never sent anywhere else.
+      See <code>docs/ADMIN_PANEL.md</code> for the full walkthrough.
+    </p>
+    <textarea id="configInput" rows="9" spellcheck="false" placeholder='{
+  "apiKey": "AIza...",
+  "authDomain": "your-project.firebaseapp.com",
+  "projectId": "your-project",
+  "storageBucket": "your-project.appspot.com",
+  "messagingSenderId": "1234567890",
+  "appId": "1:1234567890:web:abcdef"
+}'></textarea>
+    <div class="row">
+      <button id="saveConfigBtn" class="btn btn-primary">Save config &amp; reload</button>
+      <button id="clearConfigBtn" class="btn btn-ghost">Clear stored config</button>
+      <label class="checkbox"><input type="checkbox" id="demoModeToggle" /> Demo mode (browse the UI without Firebase)</label>
+    </div>
+    <p id="configError" class="error" hidden></p>
+  </section>
+
+  <!-- ------------------------------------------------------------- login card -->
+  <section id="loginCard" class="card narrow" hidden>
+    <h2>2 · Admin sign-in</h2>
+    <p class="muted">
+      Create this user once in Firebase Console → Authentication → Users → Add user
+      (email + password), then give it the <code>admin</code> claim — see
+      <code>docs/ADMIN_PANEL.md</code>. Without the claim, writes are rejected by the
+      security rules, so a leaked password alone cannot damage the catalogue.
+    </p>
+    <form id="loginForm" class="form-grid">
+      <label>Email<input type="email" id="email" autocomplete="username" required /></label>
+      <label>Password<input type="password" id="password" autocomplete="current-password" required /></label>
+      <button class="btn btn-primary" type="submit">Sign in</button>
+    </form>
+    <p id="loginError" class="error" hidden></p>
+  </section>
+
+  <!-- --------------------------------------------------------- dashboard card -->
+  <section id="dashboard" hidden>
+    <div class="stats" id="stats"></div>
+
+    <div class="card">
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" data-tab="books" role="tab">📚 Books</button>
+        <button class="tab" data-tab="papers" role="tab">📝 Past papers</button>
+      </div>
+
+      <div class="toolbar">
+        <input type="search" id="tableSearch" placeholder="Search title, subject, medium…" />
+        <select id="tableMedium">
+          <option value="">All mediums</option>
+          <option>Sinhala</option>
+          <option>English</option>
+          <option>Tamil</option>
+        </select>
+        <button id="refreshBtn" class="btn btn-ghost">↻ Refresh</button>
+        <button id="importBtn" class="btn btn-ghost">⇪ Import JSON</button>
+        <button id="addBtn" class="btn btn-primary">＋ Add entry</button>
+      </div>
+
+      <p class="muted small" id="tableInfo"></p>
+      <div class="table-wrap">
+        <table id="catalogTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="row">
+        <button id="loadMoreBtn" class="btn btn-ghost" hidden>Load more</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ------------------------------------------------------------ entry dialog -->
+<dialog id="entryDialog">
+  <form id="entryForm" method="dialog">
+    <h2 id="entryTitle">Add entry</h2>
+    <input type="hidden" id="entryId" />
+    <div class="form-grid two">
+      <label class="span2">Title *<input id="fTitle" required /></label>
+
+      <label id="fGradeWrap">Grade (1–13) *<input id="fGrade" type="number" min="1" max="13" /></label>
+      <label id="fExamWrap" hidden>Exam type *
+        <select id="fExamType">
+          <option value="OL">O/L</option>
+          <option value="AL">A/L</option>
+          <option value="Scholarship">Grade 5 Scholarship</option>
+          <option value="TermTest">Term test</option>
+        </select>
+      </label>
+
+      <label>Subject *<input id="fSubject" list="subjectList" required /></label>
+      <label>Medium *
+        <select id="fMedium">
+          <option>Sinhala</option>
+          <option>English</option>
+          <option>Tamil</option>
+        </select>
+      </label>
+
+      <label id="fCategoryWrap">Category
+        <select id="fCategory">
+          <option value="textbook">Textbook</option>
+          <option value="workbook">Workbook</option>
+          <option value="syllabus">Syllabus</option>
+          <option value="teachers-guide">Teacher's guide</option>
+        </select>
+      </label>
+      <label id="fPaperTypeWrap" hidden>Paper type
+        <select id="fPaperType">
+          <option>Paper 1</option>
+          <option>Paper 2</option>
+          <option>MCQ</option>
+          <option>Essay</option>
+          <option>Term Test</option>
+          <option>Marking Scheme</option>
+        </select>
+      </label>
+
+      <label id="fYearWrap">Year<input id="fYear" type="number" min="2015" max="2035" /></label>
+      <label id="fTermWrap" hidden>Term
+        <select id="fTerm"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+      </label>
+
+      <label class="span2">PDF file *<input id="fPdf" type="file" accept="application/pdf" /></label>
+      <label class="span2" id="fCoverWrap">Cover image (optional, textbooks)
+        <input id="fCover" type="file" accept="image/png,image/jpeg,image/webp" />
+      </label>
+      <label class="checkbox span2"><input type="checkbox" id="fMarking" /> A marking scheme is available for this paper</label>
+    </div>
+
+    <progress id="uploadProgress" value="0" max="100" hidden></progress>
+    <p id="entryError" class="error" hidden></p>
+    <div class="row end">
+      <button type="button" class="btn btn-ghost" id="cancelEntryBtn">Cancel</button>
+      <button type="submit" class="btn btn-primary" id="saveEntryBtn">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ------------------------------------------------------------ import dialog -->
+<dialog id="importDialog">
+  <form id="importForm" method="dialog">
+    <h2>Import catalogue JSON</h2>
+    <p class="muted small">
+      Accepts an array of entries in the same shape as
+      <code>app/assets/data/demo_books.json</code>. PDFs must already be uploaded
+      (use <code>pdfUrl</code>) — this imports metadata only.
+    </p>
+    <textarea id="importInput" rows="10" spellcheck="false" placeholder='[{"title":"ගණිතය 10 ශ්‍රේණිය","grade":10,"subject":"Mathematics","medium":"Sinhala","pdfUrl":"https://…"}]'></textarea>
+    <p id="importError" class="error" hidden></p>
+    <div class="row end">
+      <button type="button" class="btn btn-ghost" id="cancelImportBtn">Cancel</button>
+      <button type="submit" class="btn btn-primary">Import into <span id="importTarget">books</span></button>
+    </div>
+  </form>
+</dialog>
+
+<datalist id="subjectList"></datalist>
+
+<div id="toast" class="toast" hidden></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# EduLanka analysis configuration.
+#
+# The default `flutter_lints` set is the gate: `flutter analyze` must report zero
+# issues before a PR is merged (CI enforces it). Extra rules are left commented
+# below because they are opinions about style, not correctness — turn them on if
+# your team agrees, but note that `require_trailing_commas` and
+# `prefer_single_quotes` will flag a lot of existing code at once.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+
+linter:
+  rules:
+    # - prefer_final_locals
+    # - require_trailing_commas
+    # - sort_child_properties_last
+    # - prefer_single_quotes
+    # - unnecessary_this
+    # - avoid_unnecessary_containers
+    # - sized_box_for_whitespace
+    pass

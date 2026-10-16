@@ -1,0 +1,58 @@
+rules_version = '2';
+
+// ---------------------------------------------------------------------------
+// EduLanka Firestore rules
+//
+// Model: the catalogue is public reading material for Sri Lankan students, and
+// only the admin panel may write to it.
+//
+//   * reads   -> open (no sign-in needed, so the app works for everyone)
+//   * writes  -> only the admin, identified by a Firebase Auth custom claim
+//                (`admin: true`) OR by an allow-list of admin UIDs.
+//
+// Deploy with:  firebase deploy --only firestore:rules
+// (or paste into Firebase Console -> Firestore -> Rules)
+// ---------------------------------------------------------------------------
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Set `admin: true` as a custom claim, or list admin UIDs here.
+    function isAdmin() {
+      return request.auth != null
+        && (
+          request.auth.token.admin == true
+          || request.auth.uid in [
+            // 'PASTE_YOUR_ADMIN_UID_HERE',
+          ]
+        );
+    }
+
+    // The download counter is the one field any user may bump.
+    function onlyBumpsDownloads() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['downloads']);
+    }
+
+    match /books/{bookId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+
+      // Anonymous users may increment the counter (used for ranking). Remove
+      // this block if you prefer a strictly read-only catalogue.
+      allow update: if request.auth != null && onlyBumpsDownloads();
+    }
+
+    match /papers/{paperId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+      allow update: if request.auth != null && onlyBumpsDownloads();
+    }
+
+    // Deny everything else by default (future collections stay private until
+    // someone deliberately opens them).
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

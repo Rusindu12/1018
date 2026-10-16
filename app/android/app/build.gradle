@@ -1,0 +1,103 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+// ----------------------------------------------------------------------------
+// Firebase is OPTIONAL for EduLanka (see docs/FIREBASE_SETUP.md):
+//   1. download google-services.json into android/app/
+//   2. uncomment the two lines marked FIREBASE below
+//   3. rebuild - the app then reads Firestore instead of the demo catalogue
+// ----------------------------------------------------------------------------
+// FIREBASE: id "com.google.gms.google-services"
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader -> localProperties.load(reader) }
+}
+
+// Release signing: create android/key.properties (see docs/RELEASE.md).
+// Without it the release build falls back to debug signing, which is fine for
+// testing but must not be uploaded to Play Store.
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+def hasReleaseKeystore = keystorePropertiesFile.exists()
+if (hasReleaseKeystore) {
+    keystorePropertiesFile.withReader("UTF-8") { reader -> keystoreProperties.load(reader) }
+}
+
+def flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "1"
+def flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0.0"
+
+android {
+    namespace = "com.edulanka.app"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    defaultConfig {
+        applicationId = "com.edulanka.app"
+        // Firebase Auth 5.x requires 23 (Android 6.0); PDF rendering runs on
+        // the platform engine so no extra native libraries are needed.
+        minSdk = 23
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutterVersionCode.toInteger()
+        versionName = flutterVersionName
+        // Keeps the dex under the 65k limit on older toolchains.
+        multiDexEnabled = true
+        resourceConfigurations += ["en", "si", "ta"]
+    }
+
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            release {
+                keyAlias = keystoreProperties["keyAlias"]
+                keyPassword = keystoreProperties["keyPassword"]
+                storeFile = keystoreProperties["storeFile"] ? file(keystoreProperties["storeFile"]) : null
+                storePassword = keystoreProperties["storePassword"]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            // Debug signing only when no keystore is configured (local testing).
+            signingConfig = hasReleaseKeystore ? signingConfigs.release : signingConfigs.debug
+            minifyEnabled = false
+            shrinkResources = false
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
+    }
+
+    // Ship the small, safe subset of ABIs by default: `flutter build apk
+    // --split-per-abi` produces ~7 MB APKs instead of a 20 MB fat APK.
+    packagingOptions {
+        resources {
+            excludes += ["META-INF/DEPENDENCIES", "META-INF/LICENSE*", "META-INF/NOTICE*"]
+        }
+    }
+
+    lint {
+        // The catalogue is a content app: a missing translation must not fail
+        // a release build.
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+}
+
+flutter {
+    source = "../.."
+}

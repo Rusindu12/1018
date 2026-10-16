@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// ---------------------------------------------------------------------------
+// EduLanka Firebase Storage rules
+//
+// PDFs and cover images are public downloads (that is the point of the app);
+// only the admin panel may upload or delete them.
+// ---------------------------------------------------------------------------
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null
+        && (
+          request.auth.token.admin == true
+          || request.auth.uid in [
+            // 'PASTE_YOUR_ADMIN_UID_HERE',
+          ]
+        );
+    }
+
+    function isPdf() {
+      return request.resource.contentType.matches('application/pdf');
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // Keep uploads sane: 120 MB covers the biggest textbook, and it protects a
+    // free-tier bucket from accidental abuse.
+    function underSizeLimit() {
+      return request.resource.size < 120 * 1024 * 1024;
+    }
+
+    match /pdfs/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && isPdf() && underSizeLimit();
+    }
+
+    match /covers/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && isImage() && request.resource.size < 2 * 1024 * 1024;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
