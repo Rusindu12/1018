@@ -1,0 +1,20 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.iml
+.idea/
+.vscode/
+**/generated_plugin_registrant.dart
+
+# Firebase secrets - NEVER commit these (keep the *.example files instead)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
+!.gitignore
+
+# OS noise
+.DS_Store
+Thumbs.db

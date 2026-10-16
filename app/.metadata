@@ -1,0 +1,16 @@
+# This file tracks properties of this Flutter project.
+# Used by tooling to recreate the Android/iOS/web platform folders.
+version:
+  revision: "unknown"
+  channel: "stable"
+
+project_type: app
+
+migration:
+  platforms:
+    - platform: root
+      create_revision: ""
+      base_revision: ""
+  unmanaged_files:
+    - 'lib/main.dart'
+    - 'ios/Runner.xcodeproj/project.pbxproj'
