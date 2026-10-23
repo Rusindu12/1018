@@ -252,6 +252,7 @@ async function buildAndTrain({ fresh = true, epochs = config.epochs } = {}) {
   epochStat.textContent = `0/${epochs}`;
   accStat.textContent = '–';
   trainBtn.disabled = true;
+  teachBtn.disabled = true;
   setStatus('දත්ත සකස් වෙමින්…', 0.02);
   await nextTick();
 
@@ -316,6 +317,7 @@ async function buildAndTrain({ fresh = true, epochs = config.epochs } = {}) {
   net.lastLoss = lossHistory[lossHistory.length - 1];
   setStatus(`සූදානම් · ${train.X.length.toLocaleString()} උදාහරණ · test නිරවද්‍යතාව ${(accHistory[accHistory.length - 1] * 100).toFixed(1)}%`, 1);
   trainBtn.disabled = false;
+  teachBtn.disabled = false;
   busy = false;
   renderSamples();
   predictNow();
