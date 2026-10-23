@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>අඳින අතේ අංකය — NeuraLab</title>
+<meta name="description" content="ඔබ අඳින අංකය 16×16 ග්‍රිඩ් එකක් බවට හරවා, ඔබේ බ්‍රව්සරයේම පුහුණු වූ නියුරල් ජාලයකින් හඳුනා ගන්න." />
+<meta name="theme-color" content="#06080c" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23b9ff5c'/%3E%3Cstop offset='0.5' stop-color='%235ad9ff'/%3E%3Cstop offset='1' stop-color='%23a98bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ccircle cx='20' cy='24' r='5' fill='%2307100a'/%3E%3Ccircle cx='44' cy='20' r='5' fill='%2307100a'/%3E%3Ccircle cx='32' cy='44' r='5' fill='%2307100a'/%3E%3Cpath d='M24 22l16-1M22 28l8 12M41 24l-6 16' stroke='%2307100a' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html" aria-label="NeuraLab මුල් පිටුව">
+      <span class="brand-mark">N</span>
+      <span>NeuraLab<small style="display:block;line-height:1">in-browser AI</small></span>
+    </a>
+    <nav class="nav-links" aria-label="ප්‍රධාන මෙනුව">
+      <a href="../index.html">මුල් පිටුව</a>
+      <a href="drone.html">පියාඹන මොළය</a>
+      <a href="digits.html" class="active">අංක හඳුනාගැනීම</a>
+      <a href="text.html">අකුරු අනාවැකි</a>
+      <a href="../about.html">වැඩ කරන විදිය</a>
+    </nav>
+    <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="lab-hero">
+    <div class="lab-top">
+      <div>
+        <span class="kicker">Lab 02 · Supervised learning</span>
+        <h1 class="mt-2 si-text">අඳින අතේ <span class="grad">අංකය</span></h1>
+        <p class="lead si-text mt-2">
+          ඔබ අඳින දේ ගණන් ගන්නේ නැහැ — පික්සෙල් 256ක් බවට හරවලා, ඔබේම බ්‍රව්සරයේ
+          පුහුණු වූ නියුරල් ජාලයකට යවනවා. කිසිම සූදානම් කළ model එකක් නැහැ.
+          පළමු තත්පරයේ එය අනුමාන කරන්නේ 10%ක විශ්වාසයෙන් — පුහුණුව අවසන් වෙද්දී 95%කට වඩා.
+        </p>
+      </div>
+      <div class="panel panel-tight" style="min-width:250px;">
+        <span class="panel-label">ආකෘතිය</span>
+        <div class="detail-list mt-2">
+          <div class="detail-row"><span>ගොනුව</span><b>16×16 = 256</b></div>
+          <div class="detail-row"><span>සැඟවුණු ස්ථර</span><b>64 → 32</b></div>
+          <div class="detail-row"><span>නිමැවුම</span><b>10 පන්ති</b></div>
+          <div class="detail-row"><span>optimizer</span><b>Adam</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lab-layout">
+    <div class="lab-main">
+      <div class="panel">
+        <div class="between">
+          <span class="panel-label">අඳින්න · 0 – 9</span>
+          <button class="btn btn-sm btn-ghost" id="clearBtn">මකන්න</button>
+        </div>
+        <div class="draw-stage mt-2">
+          <div class="draw-wrap">
+            <canvas id="drawCanvas" aria-label="අංකයක් අඳින්න"></canvas>
+            <div class="draw-hint" id="drawHint">මෙතන ඔබේ ඇඟිල්ලෙන් හෝ මවුස් එකෙන්<br />අංකයක් අඳින්න</div>
+          </div>
+          <div class="stack">
+            <div class="grid-preview">
+              <div style="width:100%;display:flex;justify-content:space-between;align-items:center;">
+                <span class="panel-label" style="font-size:10px;">model දකින දේ</span>
+                <span class="mono dim" style="font-size:10px;">16×16</span>
+              </div>
+              <canvas id="gridPreview" aria-label="16×16 ග්‍රිඩ් නිරූපණය"></canvas>
+            </div>
+            <div class="panel panel-tight">
+              <div class="pred-lead">
+                <span class="pred-digit" id="predDigit">–</span>
+                <span class="pred-conf" id="predConf">පින්තූරයක් අඳින්න</span>
+              </div>
+              <div class="bars" id="bars">
+                <div class="bar-row"><span class="digit">0</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+                <div class="bar-row"><span class="digit">1</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+                <div class="bar-row"><span class="digit">2</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+                <div class="bar-row"><span class="digit">3</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+                <div class="bar-row"><span class="digit">4</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+                <div class="bar-row"><span class="digit">5</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+                <div class="bar-row"><span class="digit">6</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+                <div class="bar-row"><span class="digit">7</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+                <div class="bar-row"><span class="digit">8</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+                <div class="bar-row"><span class="digit">9</span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">0%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="between">
+          <div>
+            <div class="field-label" style="margin-bottom:6px;"><span>මේ අඳින දේ නිවැරදි අංකය තෝරන්න — එවිට ආකෘතියට උගන්වන්න පුළුවන්</span></div>
+            <div class="chips" id="teachChips" role="group" aria-label="අංක තේරීම"></div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="teachBtn">මේක උගන්වන්න</button>
+        </div>
+        <p class="note mt-2 si-text">ඔබ උගන්වන හැම උදාහරණයක්ම ඔබේ උපාංගයේ මතකයේ පමණක් රැඳෙනවා. පිටතට යන්නේ නැහැ.</p>
+      </div>
+
+      <div class="panel reveal">
+        <span class="kicker">What the model sees</span>
+        <h3 class="mt-2 si-text">පික්සෙල් 256ක් කියන්නේ මොකක්ද?</h3>
+        <p class="muted mt-2 si-text" style="font-size:14px;">
+          ඔබ අඳින රේඛාව පළමුව 64×64 දක්වා කුඩා කර, පසුව 16×16 ග්‍රිඩ් එකකට සාමාන්‍යකරණය කරනවා.
+          හැම කොටුවකුත් 0 සහ 1 අතර අංකයක් — තීන්ත ප්‍රමාණය. ඒ අංක 256 තමයි ජාලයේ ආදානය.
+          රූපයේ ස්ථානය හෝ ප්‍රමාණය වැදගත් නොවන විදියට එය කොටුව මැදට හරවනවා.
+        </p>
+        <div class="samples" id="samples" aria-label="පුහුණු දත්ත උදාහරණ"></div>
+        <p class="dim mt-2" style="font-size:12px;">ඉහත රූප පුහුණු දත්තවලින් — එකක් ක්ලික් කර එය හඳුනාගන්න පුළුවන්.</p>
+      </div>
+    </div>
+
+    <aside class="lab-side">
+      <div class="panel">
+        <div class="between">
+          <span class="panel-label">පුහුණුව</span>
+          <span class="mono dim" style="font-size:10.5px;letter-spacing:.1em;">LIVE</span>
+        </div>
+        <p id="trainStatus" style="font-size:12.5px;line-height:1.55;color:var(--ink);margin-top:6px;">ආරම්භ වෙමින්…</p>
+        <div class="progress mt-2"><i id="progressBar"></i></div>
+        <div class="stat-grid mt-3">
+          <div><b id="epochStat">0/12</b><span>epochs</span></div>
+          <div><b id="accStat">–</b><span>test නිරවද්‍යතාව</span></div>
+          <div><b id="paramStat">–</b><span>parameters</span></div>
+          <div><b id="sampleStat">0</b><span>උදාහරණ</span></div>
+        </div>
+        <div class="between mt-3">
+          <span class="panel-label">loss (cross-entropy)</span>
+          <span class="mono dim">epoch →</span>
+        </div>
+        <div class="chart-box" style="height:120px;"><canvas id="lossChart" aria-label="පුහුණුවේ දෝෂ ප්‍රස්තාරය"></canvas></div>
+        <button class="btn btn-sm mt-3" id="retrainBtn" style="width:100%;">අලුත් මොළයකින් නැවත පුහුණු කරන්න</button>
+      </div>
+
+      <div class="panel">
+        <span class="panel-label">ඇත්තටම වෙන්නේ මොකක්ද</span>
+        <div class="stack mt-2">
+          <div class="row" style="align-items:flex-start;gap:10px;">
+            <span class="mono" style="color:var(--cyan)">1</span>
+            <p class="muted" style="font-size:13px;">අහඹු බරවලින් පටන් ගන්නා ජාලයක් අඳින ලද අංකයක් සඳහා අහඹු සම්භාවිතා 10ක් දෙනවා.</p>
+          </div>
+          <div class="row" style="align-items:flex-start;gap:10px;">
+            <span class="mono" style="color:var(--cyan)">2</span>
+            <p class="muted" style="font-size:13px;">හරි පන්තියේ සම්භාවිතාවේ −log එක loss එක. එය අඩු කරන්න gradient එක පසුපසට ගලා යනවා.</p>
+          </div>
+          <div class="row" style="align-items:flex-start;gap:10px;">
+            <span class="mono" style="color:var(--cyan)">3</span>
+            <p class="muted" style="font-size:13px;">Adam optimizer එකෙන් බර සහ bias ටිකෙන් ටික හැඩ ගන්නවා. epoch 12කින් පස්සේ රටා හැඳින ගන්නවා.</p>
+          </div>
+        </div>
+        <p class="note mt-3">පුහුණු දත්ත හදන්නේ ද බ්‍රව්සරයේමයි — අකුරු ආකෘතිවලට සසම්භාවී කැරකැවීම්, කැපීම් සහ ප්‍රමාණ වෙනස්කම් දමා උදාහරණ 700ක් ජනනය කරනවා.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="row">
+      <span class="brand-mark" style="width:24px;height:24px;border-radius:7px;font-size:12px;">N</span>
+      <span>NeuraLab · බ්‍රව්සරය තුළම හදපු AI පරීක්ෂණ</span>
+    </div>
+    <div class="foot-links">
+      <a href="../about.html">වැඩ කරන විදිය</a>
+      <a href="../index.html">Labs</a>
+      <a href="https://github.com/Rusindu12/1018" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="../assets/js/labs/digits.js"></script>
+</body>
+</html>

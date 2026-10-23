@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>වැඩ කරන විදිය — NeuraLab</title>
+<meta name="description" content="NeuraLab තුළ නියුරල් ජාල, පරිණාමීය ඇල්ගොරිතම සහ n-gram ආකෘති වැඩ කරන ආකාරය පිළිබඳ පැහැදිලි පැහැදිලි කිරීම." />
+<meta name="theme-color" content="#06080c" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23b9ff5c'/%3E%3Cstop offset='0.5' stop-color='%235ad9ff'/%3E%3Cstop offset='1' stop-color='%23a98bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ccircle cx='20' cy='24' r='5' fill='%2307100a'/%3E%3Ccircle cx='44' cy='20' r='5' fill='%2307100a'/%3E%3Ccircle cx='32' cy='44' r='5' fill='%2307100a'/%3E%3Cpath d='M24 22l16-1M22 28l8 12M41 24l-6 16' stroke='%2307100a' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="NeuraLab මුල් පිටුව">
+      <span class="brand-mark">N</span>
+      <span>NeuraLab<small style="display:block;line-height:1">in-browser AI</small></span>
+    </a>
+    <nav class="nav-links" aria-label="ප්‍රධාන මෙනුව">
+      <a href="index.html">මුල් පිටුව</a>
+      <a href="labs/drone.html">පියාඹන මොළය</a>
+      <a href="labs/digits.html">අංක හඳුනාගැනීම</a>
+      <a href="labs/text.html">අකුරු අනාවැකි</a>
+      <a href="about.html" class="active">වැඩ කරන විදිය</a>
+    </nav>
+    <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="lab-hero">
+    <span class="kicker">How it actually works</span>
+    <h1 class="mt-2">යන්ත්‍රය ඇතුළත<br /><span class="grad">මොකක්ද තියෙන්නේ?</span></h1>
+    <p class="lead si-text mt-2">පැහැදිලි කිරීම් තුනක්, ගණිතය ටිකක්, සහ “මේක AI ද?” කියන අවංක පිළිතුරක්. ඔබට කේතය කියවන්නත් පුළුවන් — සියල්ලම පොදු JavaScript.</p>
+  </section>
+
+  <div class="about-grid" style="padding-bottom: 60px;">
+    <nav class="about-nav" aria-label="මාතෘකා">
+      <a href="#what" class="on">මේ මොකක්ද</a>
+      <a href="#network">නියුරල් ජාලය</a>
+      <a href="#digits">අංක හඳුනාගැනීම</a>
+      <a href="#evolution">පරිණාමය</a>
+      <a href="#language">භාෂා ආකෘතිය</a>
+      <a href="#honest">අවංක සීමා</a>
+      <a href="#privacy">පෞද්ගලිකත්වය</a>
+      <a href="#stack">තාක්ෂණය</a>
+    </nav>
+
+    <div class="prose">
+      <section id="what">
+        <span class="kicker">01 · Overview</span>
+        <h2 class="mt-2">මේ මොකක්ද?</h2>
+        <p>
+          <b>NeuraLab</b> යනු බ්‍රව්සරය තුළම ධාවනය වන කුඩා machine learning පරීක්ෂණාගාරයක්.
+          මෙහි කිසිම පෙර-පුහුණු කළ ආකෘතියක් (pre-trained model), cloud API එකක් හෝ බාහිර දත්ත ගොනුවක් නැහැ.
+          ඔබ පිටුවක් විවෘත කරන විට, අවශ්‍ය දත්ත ජනනය කරගෙන, ජාලය මුල සිට පුහුණු කරන්නේ ඔබේම පරිගණකයයි.
+        </p>
+        <div class="labs-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px;">
+          <a class="panel panel-tight" href="labs/drone.html">
+            <span class="mono" style="color:var(--cyan)">LAB 01</span>
+            <h4 class="mt-1 si-text">පියාඹන මොළය</h4>
+            <p class="dim" style="font-size:12.5px;">Genetic algorithm + neural net. දත්ත අවශ්‍ය නැහැ.</p>
+          </a>
+          <a class="panel panel-tight" href="labs/digits.html">
+            <span class="mono" style="color:var(--lime)">LAB 02</span>
+            <h4 class="mt-1 si-text">අඳින අතේ අංකය</h4>
+            <p class="dim" style="font-size:12.5px;">Supervised learning. ඔබ අඳින දේ හඳුනාගන්නවා.</p>
+          </a>
+          <a class="panel panel-tight" href="labs/text.html">
+            <span class="mono" style="color:var(--violet)">LAB 03</span>
+            <h4 class="mt-1 si-text">අකුරු අනාවැකි</h4>
+            <p class="dim" style="font-size:12.5px;">Statistical language model. ඊළඟ අකුර අනාවැකි.</p>
+          </a>
+        </div>
+      </section>
+
+      <section id="network">
+        <span class="kicker">02 · Neural networks</span>
+        <h2 class="mt-2">නියුරල් ජාලයක් වැඩ කරන විදිය</h2>
+        <p>
+          ජාලයක් යනු සංඛ්‍යා එකතුවක් පිළිගෙන, ඒවා බර (weights) සහ bias සමඟ එකතු කර,
+          සරල නොවන ශ්‍රිතයක් හරහා යවා, අවසානයේ සම්භාවිතා ලැයිස්තුවක් දෙන ගණිතමය ශ්‍රිතයක්.
+          අංක ලැබ් එකේදී ආදානය 256ක් (16×16 පික්සෙල්), නිමැවුම 10ක් (අංක 0–9).
+        </p>
+        <div class="formula">
+          z<sup>[l]</sup> = W<sup>[l]</sup> a<sup>[l-1]</sup> + b<sup>[l]</sup><br />
+          a<sup>[l]</sup> = <em>ReLU</em>(z<sup>[l]</sup>) = max(0, z<sup>[l]</sup>)<br />
+          ŷ = <em>softmax</em>(z<sup>[L]</sup>)<sub>k</sub> = e<sup>z<sub>k</sub></sup> / Σ<sub>j</sub> e<sup>z<sub>j</sub></sup><br /><br />
+          L = −log ŷ<sub>y</sub> &nbsp;&nbsp; (y = නිවැරදි පන්තිය)<br />
+          ∂L/∂W<sup>[l]</sup> = δ<sup>[l]</sup> (a<sup>[l-1]</sup>)<sup>T</sup> &nbsp;&nbsp; ← backpropagation
+        </div>
+        <p>
+          ඉගෙනීම යනු බර කුඩා ප්‍රමාණයෙන් වෙනස් කිරීම් මාලාවක්. අපි <b>Adam</b> optimizer එක භාවිතා කරනවා —
+          එය හැම බරකටම වෙන වෙනම ඉගෙනුම් වේගයක් තබා ගන්නවා. අංක ලැබ් එකේදී ජාලයට
+          <code>256 → 64 → 32 → 10</code> ස්ථර තියෙනවා, එනම් parameters 18,858ක්.
+        </p>
+        <div class="callout">
+          <b>ඇත්ත මොකක්ද:</b> අපේ ජාලයට “අංකයක්” යන සංකල්පය නැහැ. එය දකින්නේ පික්සෙල් 256ක සංඛ්‍යා
+          පමණයි. හැඩතල අතර ඇති සම්බන්ධතා එය ඉගෙන ගන්නවා — අර්ථය නොවේ.
+        </div>
+      </section>
+
+      <section id="digits">
+        <span class="kicker">03 · The digits lab</span>
+        <h2 class="mt-2">අංක හඳුනාගැනීම</h2>
+        <p>
+          ඔබ අඳින රේඛාව පළමුව 64×64 දක්වා කුඩා කර, 4×4 කොටස්වල සාමාන්‍යය ගෙන 16×16 ග්‍රිඩ් එකක් හදනවා.
+          ඉන්පසු තීන්ත ඇති කොටස වටා කපා, එය කොටුව මැදට ප්‍රමාණාත්මකව හරවනවා. ඒ නිසා ඔබ අඳින තැන
+          හෝ රේඛාවේ ඝනකම වැදගත් නොවේ.
+        </p>
+        <p>
+          පුහුණු දත්ත 700ක් ජනනය වන්නේ ස්වයංක්‍රීයව — අංක ආකෘතිවලට සසම්භාවී කැරකැවීම්, shear, ප්‍රමාණ සහ
+          ස්ථාන වෙනස්කම් එකතු කරලා. ශුද්ධ ආකෘති 10ක් පමණක් දුන්නොත් ජාලය ඒවා කටපාඩම් කරගන්නවා;
+          වෙනස්කම් නිසා එය සාමාන්‍යකරණය (generalize) කරන්න ඉගෙන ගන්නවා.
+        </p>
+        <div class="detail-list">
+          <div class="detail-row"><span>පුහුණු උදාහරණ</span><b>700 (ඔබේම ඒවා එකතු වේ)</b></div>
+          <div class="detail-row"><span>ජාලය</span><b>256 → 64 → 32 → 10</b></div>
+          <div class="detail-row"><span>Loss</span><b>categorical cross-entropy</b></div>
+          <div class="detail-row"><span>Epochs</span><b>12 (පිටුව පූරණයේදී)</b></div>
+        </div>
+      </section>
+
+      <section id="evolution">
+        <span class="kicker">04 · Neuroevolution</span>
+        <h2 class="mt-2">පරිණාමයෙන් ඉගෙනීම</h2>
+        <p>
+          ඩ්‍රෝන ලැබ් එකේ ප්‍රතිලෝම සම්ප්‍රේෂණයක් (backpropagation) නැහැ. ඒ වෙනුවට හැම ඩ්‍රෝනයකුත්
+          ජාල බර 49ක “ජාන” කට්ටලයක් ලෙස උපදිනවා. පියාසැරිය අවසන් වූ පසු fitness අනුව තේරීම සිදු වෙනවා.
+        </p>
+        <ol>
+          <li><b>Fitness</b> = ගිය දුර + පහු කළ gates × 420. අවහිරයක වැදුණොත් හෝ බිම/අහසේ ගැටුණොත් අවසන්.</li>
+          <li><b>Elitism</b> — හොඳම 10% ඊළඟ පරම්පරාවට කෙළින්ම යනවා. ඉගෙන ගත් දේ නැති නොවේ.</li>
+          <li><b>Tournament selection</b> — අහඹු තිදෙනෙකුගෙන් හොඳම අය දෙමාපියන් ලෙස තෝරනවා.</li>
+          <li><b>Crossover</b> — දෙමාපියන්ගේ බර අහඹු ලෙස මිශ්‍ර කරනවා.</li>
+          <li><b>Mutation</b> — සෑම බරක්ම 6%ක සම්භාවිතාවකින් සුළු සසම්භාවී අගයකින් වෙනස් වෙනවා.</li>
+        </ol>
+        <p>
+          මෙය “gradient නැති ඉගෙනීමක්”. ඉලක්ක ශ්‍රිතය වෙනස් කළත් වැඩ කරනවා — ඒත් අඩු කාර්යක්ෂමයි.
+          ඒ නිසාම එය බලන්න ලස්සනයි: මුල් පරම්පරාවේ ඩ්‍රෝන සියල්ලම වැටෙනවා; පරම්පරා 10–20කින්
+          පස්සේ පියාසැරිය උපදිනවා.
+        </p>
+        <div class="formula">
+          θ<sub>child</sub> = crossover(θ<sub>a</sub>, θ<sub>b</sub>) + <em>N</em>(0, σ)<br />
+          σ = mutation scale · නියතව පවතින සසම්භාවී කම්පනය
+        </div>
+      </section>
+
+      <section id="language">
+        <span class="kicker">05 · Language</span>
+        <h2 class="mt-2">අකුරු අනාවැකි ආකෘතිය</h2>
+        <p>
+          මෙය අකුරු මට්ටමේ n-gram ආකෘතියක් (char-level n-gram). සිංහල සඳහා අකුරු වෙනුවට
+          <b>grapheme clusters</b> භාවිතා කරනවා — එනම් “ක්” වැනි අකුරක් එක ඒකකයක් ලෙස. එසේ නොකළොත්
+          ස්වර ලකුණු වෙන් වී අකුරු කැඩෙනවා.
+        </p>
+        <div class="formula">
+          P(c<sub>t</sub> | c<sub>t-n</sub> … c<sub>t-1</sub>) = count(c<sub>t-n</sub>…c<sub>t-1</sub>c<sub>t</sub>) / count(c<sub>t-n</sub>…c<sub>t-1</sub>)<br />
+          P<sub>temp</sub>(c) ∝ P(c)<sup>1/T</sup> &nbsp;&nbsp; (T = උෂ්ණත්වය)
+        </div>
+        <p>
+          Context එක නොදන්නා විට අපි කෙටි context එකකට “backoff” කරනවා. ඒ නිසා ආකෘතිය කිසිදා හිර නොවේ.
+          උෂ්ණත්වය 1ට වඩා වැඩි නම් සම්භාවිතා වඩාත් සමතලා වෙනවා — අඩු සම්භාවිතා අකුරුවලටත් අවස්ථාව ලැබෙනවා.
+          අඩු නම් හැම විටම ඉහළම අකුර තෝරනවා.
+        </p>
+      </section>
+
+      <section id="honest">
+        <span class="kicker">06 · Honesty</span>
+        <h2 class="mt-2">මේක AI ද? ඇත්තටම.</h2>
+        <p>
+          මේවා සැබෑ ඇල්ගොරිතම — නියුරල් ජාල, genetic algorithm, සංඛ්‍යානමය භාෂා ආකෘතියක්. ඒත් ඒවා
+          <b>කුඩා</b>. මෙය ChatGPT වැනි විශාල භාෂා ආකෘතියක් නොවේ. අංක ලැබ් එකේ ජාලය බර 20,000ක්
+          පමණි; GPT වැනි ආකෘතිවල බිලියන 100+ ඇත.
+        </p>
+        <ul>
+          <li>අංක ලැබ් එක <b>තමන් ලියපු අංක</b> හඳුනාගනී — MNIST වගේ කිසිදු දත්ත ගොනුවක් භාවිතා නොකරයි.</li>
+          <li>පුහුණු දත්ත ස්වයංක්‍රීයව ජනනය වන නිසා, ඒවා අතින් ලියූ අංකවලට වඩා “පිරිසිදු”යි. ඔබේ අකුරු වෙනස් නම් එය වරදින්න පුළුවන්.</li>
+          <li>භාෂා ආකෘතියට අර්ථය තේරෙන්නේ නැහැ. එය රටා ගණන් කරනවා පමණයි.</li>
+          <li>ඩ්‍රෝන ලැබ් එකේ ප්‍රතිඵලය සසම්භාවී (stochastic) — හැම විටම එකම ලෙස වර්ධනය නොවේ.</li>
+        </ul>
+        <div class="callout">
+          මේවා “දත්ත එකතු කරන AI නිෂ්පාදන” නොවේ. ඉගෙනීමේ යාන්ත්‍රණය ඇස්වලින් දැකගන්න හදපු
+          අධ්‍යාපනික පරීක්ෂණ.
+        </div>
+      </section>
+
+      <section id="privacy">
+        <span class="kicker">07 · Privacy</span>
+        <h2 class="mt-2">ඔබේ දත්ත කොහේ යනවාද?</h2>
+        <p>
+          කොහේවත් යන්නේ නැහැ. ඔබ අඳින දේ, ලියන පෙළ, පුහුණු වන බර — සියල්ල බ්‍රව්සරයේ මතකයේ පමණයි.
+          පිටුව refresh කළ පසු ඒවා අතුරුදහන්. කිසිදු analytics, cookie හෝ backend server එකක් නැහැ.
+          එකම බාහිර ඉල්ලීම වන්නේ Google Fonts (typography) පමණි — එය ඉවත් කළත් සියලු ක්‍රියාකාරකම් වැඩ කරයි.
+        </p>
+      </section>
+
+      <section id="stack">
+        <span class="kicker">08 · Stack</span>
+        <h2 class="mt-2">තාක්ෂණය</h2>
+        <div class="detail-list">
+          <div class="detail-row"><span>Frontend</span><b>HTML · CSS · ES modules</b></div>
+          <div class="detail-row"><span>ML engine</span><b>hand-written JS (Float32Array)</b></div>
+          <div class="detail-row"><span>Dependencies</span><b>0 (runtime)</b></div>
+          <div class="detail-row"><span>Server</span><b>~90-line Node static server</b></div>
+          <div class="detail-row"><span>Tests</span><b>node --test style scripts</b></div>
+        </div>
+        <p class="mt-3">
+          සියලුම core ගොනු <code>assets/js/core/</code> තුළ. ඔබට <code>mlp.js</code> කියවලා optimizer එක
+          වෙනස් කරන්න, <code>evolution.js</code> තුළ mutation එක වෙනස් කරන්න, හෝ <code>ngram.js</code> තුළ
+          order එක වැඩි කරන්න පුළුවන්. කේතය <a href="https://github.com/Rusindu12/1018" style="color:var(--lime)">GitHub</a>-හි.
+        </p>
+        <div class="row mt-3">
+          <a class="btn btn-primary" href="labs/drone.html">ලැබ් එකක් අත්හදා බලන්න</a>
+          <a class="btn btn-ghost" href="index.html">මුල් පිටුවට</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="row">
+      <span class="brand-mark" style="width:24px;height:24px;border-radius:7px;font-size:12px;">N</span>
+      <span>NeuraLab · බ්‍රව්සරය තුළම හදපු AI පරීක්ෂණ</span>
+    </div>
+    <div class="foot-links">
+      <a href="index.html">මුල් පිටුව</a>
+      <a href="labs/text.html">Labs</a>
+      <a href="https://github.com/Rusindu12/1018" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="assets/js/about.js"></script>
+</body>
+</html>
