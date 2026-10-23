@@ -28,6 +28,7 @@ const statBpc = $('#statBpc');
 const statOrder = $('#statOrder');
 
 let model = null;
+let trainedText = '';
 let currentCorpus = 'sinhala';
 let typeTimer = null;
 let generated = '';
@@ -77,6 +78,7 @@ function train({ silent = false } = {}) {
   const trainText = tokens.slice(0, cut).join('');
   const heldout = tokens.slice(cut).join('');
 
+  trainedText = trainText;
   model = new NGramModel({ order });
   model.feed(trainText);
   model.finalize();
@@ -128,7 +130,7 @@ function escapeHtml(s) {
 function generate() {
   if (!model) return;
   clearInterval(typeTimer);
-  const tokens = tokenize(model.trainedChars ? corpusInput.value : '');
+  const tokens = tokenize(trainedText);
   const fallbackSeed = tokens.slice(0, 12).join('');
   const prompt = promptInput.value || fallbackSeed;
   const total = Number(lenRange.value);

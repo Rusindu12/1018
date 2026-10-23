@@ -78,7 +78,7 @@ export class NGramModel {
   /** Sample a continuation, seeded by optional prompt. */
   generate(prompt = '', length = 180, { temperature = 1, rng = Math.random } = {}) {
     let out = splitChars(prompt);
-    const contextLen = Math.min(this.order, 3);
+    const contextLen = Math.max(1, this.order);
     while (out.length < length) {
       const context = out.slice(-contextLen).join('');
       const { probs } = this.distribution(context);
