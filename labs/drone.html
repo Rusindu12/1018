@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>පියාඹන මොළය — NeuraLab</title>
+<meta name="description" content="පරම්පරා ගණනාවක් තුළ ඩ්‍රෝන රැළක් අවහිර හරහා පියාඹන්න ඉගෙන ගන්නා neuroevolution සිමියුලේෂන් එකක්." />
+<meta name="theme-color" content="#06080c" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23b9ff5c'/%3E%3Cstop offset='0.5' stop-color='%235ad9ff'/%3E%3Cstop offset='1' stop-color='%23a98bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ccircle cx='20' cy='24' r='5' fill='%2307100a'/%3E%3Ccircle cx='44' cy='20' r='5' fill='%2307100a'/%3E%3Ccircle cx='32' cy='44' r='5' fill='%2307100a'/%3E%3Cpath d='M24 22l16-1M22 28l8 12M41 24l-6 16' stroke='%2307100a' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html" aria-label="NeuraLab මුල් පිටුව">
+      <span class="brand-mark">N</span>
+      <span>NeuraLab<small style="display:block;line-height:1">in-browser AI</small></span>
+    </a>
+    <nav class="nav-links" aria-label="ප්‍රධාන මෙනුව">
+      <a href="../index.html">මුල් පිටුව</a>
+      <a href="drone.html" class="active">පියාඹන මොළය</a>
+      <a href="digits.html">අංක හඳුනාගැනීම</a>
+      <a href="text.html">අකුරු අනාවැකි</a>
+      <a href="../about.html">වැඩ කරන විදිය</a>
+    </nav>
+    <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="lab-hero">
+    <div class="lab-top">
+      <div>
+        <span class="kicker">Lab 01 · Neuroevolution</span>
+        <h1 class="mt-2 si-text">පියාඹන <span class="grad">මොළය</span></h1>
+        <p class="lead si-text mt-2">
+          මේ රැළට කිසිවෙක් පියාඹන්න උගන්වලා නැහැ. සෑම ඩ්‍රෝනයකුත් තමන්ගේම කුඩා මොළයක් එක්ක උපදිනවා.
+          හොඳම ගමන්කරුවන් දරුවන් හදනවා, දුර්වල අය අතරමං වෙනවා. පරම්පරා ගණනාවකින් පස්සේ
+          ඔබ ඉදිරියේම පියාසැරිය උපදිනවා — එකම වරදක් අතින් වත් නැතුව.
+        </p>
+      </div>
+      <div class="panel panel-tight" style="min-width:250px;">
+        <span class="panel-label">ජාලය</span>
+        <div class="detail-list mt-2">
+          <div class="detail-row"><span>ස්ථර</span><b>4 → 8 → 1</b></div>
+          <div class="detail-row"><span>බර</span><b>49</b></div>
+          <div class="detail-row"><span>ඇල්ගොරිතම</span><b>GA + elitism</b></div>
+          <div class="detail-row"><span>දත්ත</span><b>0</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lab-layout">
+    <div class="lab-main">
+      <div class="canvas-frame">
+        <canvas id="droneCanvas" width="1000" height="600" aria-label="ඩ්‍රෝන රැළ පියාඹන සිමියුලේෂන්"></canvas>
+        <div class="canvas-hud">
+          <span class="hud-pill" id="hudGen">GEN 001</span>
+          <span class="hud-pill" id="hudAlive">ALIVE 80/80</span>
+          <span class="hud-pill" id="hudAcc">FLAP 0.00</span>
+        </div>
+        <div class="canvas-caption si-text">හරිත ඊතලය = වර්තමාන හොඳම ඩ්‍රෝනය · නිල් තිත් = සෙසු ජනගහනය · G1… = අවහිර (gates)</div>
+      </div>
+
+      <div class="panel">
+        <div class="between">
+          <div class="controls">
+            <button class="btn btn-sm" id="pauseBtn" aria-pressed="false">
+              <span id="pauseIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5v14M16 5v14" stroke-linecap="round" /></svg></span>
+              <span id="pauseLabel">නවත්වන්න</span>
+            </button>
+            <div class="seg" role="group" aria-label="වේගය">
+              <button data-speed="1">1×</button>
+              <button data-speed="4" class="on">4×</button>
+              <button data-speed="12">12×</button>
+            </div>
+            <button class="btn btn-sm" id="turboBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8Z" stroke-linejoin="round"/></svg>
+              පරම්පරා 8ක් වේගයෙන්
+            </button>
+          </div>
+          <button class="btn btn-sm btn-ghost" id="resetBtn">නැවත පටන් ගන්න</button>
+        </div>
+      </div>
+
+      <div class="panel reveal">
+        <span class="kicker">The loop</span>
+        <h3 class="mt-2 si-text">පරිණාමය වැඩ කරන විදිය</h3>
+        <div class="labs-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 16px; gap: 12px;">
+          <div>
+            <span class="mono" style="color:var(--cyan)">01 · GENOME</span>
+            <p class="muted mt-1" style="font-size: 13.5px;">සෑම ඩ්‍රෝනයකුත් ජාලයේ බර 49ක් ලෙස උපදිනවා. ඒ බර තමයි ඔහුගේ “ජාන”.</p>
+          </div>
+          <div>
+            <span class="mono" style="color:var(--lime)">02 · SELECTION</span>
+            <p class="muted mt-1" style="font-size: 13.5px;">වැඩිපුර gates පහු කරලා දුර ගිය අය හොඳමයි. හොඳම 10% අතින් තෝරා ගන්නවා.</p>
+          </div>
+          <div>
+            <span class="mono" style="color:var(--violet)">03 · MUTATION</span>
+            <p class="muted mt-1" style="font-size: 13.5px;">දරුවාගේ බරවලින් 6%ක් සුළු ලෙස වෙනස් වෙනවා. ඒ වෙනස්කම් තමයි ඉගෙනීම.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="lab-side">
+      <div class="panel">
+        <div class="between">
+          <span class="panel-label">සජීවී තත්ත්වය</span>
+          <span class="hud-pill">live</span>
+        </div>
+        <div class="stat-grid mt-2">
+          <div><b id="statGen">1</b><span>පරම්පරාව</span></div>
+          <div><b id="statAlive">80</b><span>ජීවත්</span></div>
+          <div><b id="statGates">0</b><span>gates (හොඳම)</span></div>
+          <div><b id="statRecord">0</b><span>වාර්තාව</span></div>
+        </div>
+        <div class="detail-list mt-3">
+          <div class="detail-row"><span>හොඳම fitness</span><b id="statBest">0</b></div>
+          <div class="detail-row"><span>පරම්පරා ගණන</span><b id="genCount">0</b></div>
+          <div class="detail-row"><span>වාර්තාව (gates)</span><b id="recordGates">0</b></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="between">
+          <span class="panel-label">fitness ඉතිහාසය</span>
+          <span class="mono dim">generation →</span>
+        </div>
+        <div class="chart-box"><canvas id="fitnessChart" aria-label="පරම්පරා අනුව fitness ප්‍රස්තාරය"></canvas></div>
+        <div class="legend">
+          <span><i style="background:#b9ff5c"></i>හොඳම</span>
+          <span><i style="background:#5ad9ff"></i>සාමාන්‍ය</span>
+        </div>
+        <p class="note mt-3 si-text">රේඛාව උඩට යනවා = රැළ ඉගෙන ගන්නවා. පළමු පරම්පරා කිහිපයේ අගය අඩු වීම සාමාන්‍යයි — මුල් මොළ සියල්ලම සසම්භාවීයි.</p>
+      </div>
+
+      <div class="panel">
+        <span class="panel-label">පරිණාමයේ රසායනය</span>
+        <div class="field">
+          <div class="field-label"><span>විකෘති අනුපාතය</span><output id="mutVal">0.06</output></div>
+          <input type="range" id="mutRange" min="2" max="40" value="6" />
+        </div>
+        <div class="field">
+          <div class="field-label"><span>විකෘති ප්‍රමාණය</span><output id="scaleVal">0.25</output></div>
+          <input type="range" id="scaleRange" min="10" max="100" value="25" />
+        </div>
+        <div class="field">
+          <div class="field-label"><span>ජනගහනය</span><output id="popVal">80</output></div>
+          <input type="range" id="popRange" min="40" max="160" step="10" value="80" />
+        </div>
+        <p class="note mt-3 si-text">ජනගහනය වෙනස් කළ පසු “නැවත පටන් ගන්න” ඔබන්න. විකෘති අගය වැඩි නම් වේගයෙන් වෙනස් වෙනවා — ඒත් හොඳම ගමන්කරුවා නැති වෙන්නත් පුළුවන්.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="row">
+      <span class="brand-mark" style="width:24px;height:24px;border-radius:7px;font-size:12px;">N</span>
+      <span>NeuraLab · බ්‍රව්සරය තුළම හදපු AI පරීක්ෂණ</span>
+    </div>
+    <div class="foot-links">
+      <a href="../about.html">වැඩ කරන විදිය</a>
+      <a href="../index.html">Labs</a>
+      <a href="https://github.com/Rusindu12/1018" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="../assets/js/labs/drone.js"></script>
+</body>
+</html>

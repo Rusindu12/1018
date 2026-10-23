@@ -1,0 +1,14 @@
+{
+  "name": "neuralab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Three machine-learning experiments that train live in your browser — no cloud, no API keys.",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
