@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const PAGES = ['index.html', 'about.html', 'labs/drone.html', 'labs/digits.html', 'labs/text.html'];
+const PAGES = ['index.html', 'about.html', 'labs/drone.html', 'labs/digits.html', 'labs/snake.html', 'labs/text.html'];
 
 test('every local href/src in the pages exists', async () => {
   const missing = [];

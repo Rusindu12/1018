@@ -143,7 +143,43 @@ export function revealOnScroll(root = document) {
   els.forEach((el) => io.observe(el));
 }
 
+export function initTheme() {
+  const root = document.documentElement;
+  const btn = document.getElementById('themeBtn');
+  let stored = null;
+  try {
+    stored = localStorage.getItem('neuralab-theme');
+  } catch {
+    stored = null;
+  }
+  const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  const theme = stored || (prefersLight ? 'light' : 'dark');
+  applyTheme(theme);
+
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    try {
+      localStorage.setItem('neuralab-theme', next);
+    } catch {
+      /* private mode — ignore */
+    }
+  });
+
+  function applyTheme(next) {
+    root.dataset.theme = next;
+    if (!btn) return;
+    btn.setAttribute('aria-label', next === 'light' ? 'අඳුරු තේමාවට මාරු වන්න' : 'ආලෝක තේමාවට මාරු වන්න');
+    btn.title = btn.getAttribute('aria-label');
+    btn.innerHTML = next === 'light'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" stroke-linecap="round"/></svg>';
+  }
+}
+
 export function initNav() {
+  initTheme();
   const toggle = $('.nav-toggle');
   const links = $('.nav-links');
   if (toggle && links) {

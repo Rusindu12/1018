@@ -24,10 +24,16 @@
       <a href="index.html">මුල් පිටුව</a>
       <a href="labs/drone.html">පියාඹන මොළය</a>
       <a href="labs/digits.html">අංක හඳුනාගැනීම</a>
+      <a href="labs/snake.html">සර්ප මොළය</a>
       <a href="labs/text.html">අකුරු අනාවැකි</a>
       <a href="about.html" class="active">වැඩ කරන විදිය</a>
     </nav>
-    <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+    <div class="nav-actions">
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="තේමාව මාරු කරන්න" title="තේමාව මාරු කරන්න">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" stroke-linecap="round"/></svg>
+      </button>
+      <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+    </div>
   </div>
 </header>
 
@@ -44,6 +50,8 @@
       <a href="#network">නියුරල් ජාලය</a>
       <a href="#digits">අංක හඳුනාගැනීම</a>
       <a href="#evolution">පරිණාමය</a>
+      <a href="#cnn">CNN එකක්</a>
+      <a href="#snake">සර්ප මොළය</a>
       <a href="#language">භාෂා ආකෘතිය</a>
       <a href="#honest">අවංක සීමා</a>
       <a href="#privacy">පෞද්ගලිකත්වය</a>
@@ -59,7 +67,7 @@
           මෙහි කිසිම පෙර-පුහුණු කළ ආකෘතියක් (pre-trained model), cloud API එකක් හෝ බාහිර දත්ත ගොනුවක් නැහැ.
           ඔබ පිටුවක් විවෘත කරන විට, අවශ්‍ය දත්ත ජනනය කරගෙන, ජාලය මුල සිට පුහුණු කරන්නේ ඔබේම පරිගණකයයි.
         </p>
-        <div class="labs-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px;">
+        <div class="labs-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px;">
           <a class="panel panel-tight" href="labs/drone.html">
             <span class="mono" style="color:var(--cyan)">LAB 01</span>
             <h4 class="mt-1 si-text">පියාඹන මොළය</h4>
@@ -70,8 +78,13 @@
             <h4 class="mt-1 si-text">අඳින අතේ අංකය</h4>
             <p class="dim" style="font-size:12.5px;">Supervised learning. ඔබ අඳින දේ හඳුනාගන්නවා.</p>
           </a>
+          <a class="panel panel-tight" href="labs/snake.html">
+            <span class="mono" style="color:var(--amber)">LAB 03</span>
+            <h4 class="mt-1 si-text">සර්ප මොළය</h4>
+            <p class="dim" style="font-size:12.5px;">Neuroevolution. සර්පයන් 120ක් ආහාර හොයාගන්න ඉගෙන ගනී.</p>
+          </a>
           <a class="panel panel-tight" href="labs/text.html">
-            <span class="mono" style="color:var(--violet)">LAB 03</span>
+            <span class="mono" style="color:var(--violet)">LAB 04</span>
             <h4 class="mt-1 si-text">අකුරු අනාවැකි</h4>
             <p class="dim" style="font-size:12.5px;">Statistical language model. ඊළඟ අකුර අනාවැකි.</p>
           </a>
@@ -150,8 +163,53 @@
         </div>
       </section>
 
+      <section id="cnn">
+        <span class="kicker">05 · Convolutions</span>
+        <h2 class="mt-2">CNN එකක් ඇයි වෙනස්?</h2>
+        <p>
+          MLP එකේ හැම පික්සෙලයක්ම හැම neuron එකකටම වෙන වෙනම සම්බන්ධයි. ඒ නිසා පික්සෙලයක් එහා මෙහා ගියොත්
+          ජාලය එය “අලුත්” දෙයක් විදියට දකිනවා. CNN එකේ දී <b>filters</b> කියන කුඩා කවුළු රූපය පුරාම ලිස්සා යනවා —
+          එකම filter එකෙන් හැම තැනකම එකම රටාවක් හොයනවා. ඒ නිසා රේඛාවක් මැද තිබුණත් කෙළවර තිබුණත් එකම විදියට හඳුනාගන්නවා.
+        </p>
+        <div class="formula">
+          (f * x)[y][x] = Σ<sub>ky</sub> Σ<sub>kx</sub> f[ky][kx] · x[y+ky−1][x+kx−1]<br />
+          a = <em>ReLU</em>(conv + b) → <em>maxpool</em> 2×2 → … → dense → softmax<br />
+          ∂L/∂f[ky][kx] = Σ<sub>y,x</sub> δ[y][x] · x[y+ky−1][x+kx−1]
+        </div>
+        <p>
+          අපේ ජාලය: <code>conv(6, 3×3) → pool → conv(12, 3×3) → pool → dense(32) → dense(10)</code>.
+          parameters 7,226ක් විතරයි — MLP එකේ 18,858ට වඩා අඩු. ඒත් රූපයේ ව්‍යුහය නිසා එය සමහර අවස්ථාවල
+          වඩාත් හොඳින් සාමාන්‍යකරණය කරනවා.
+        </p>
+        <div class="callout">
+          CNN එකේ පසුපස ගමන (backpropagation) සම්පූර්ණයෙන්ම අතින් ලියා ඇත — convolution එකේ gradient එකත් සමඟ.
+          දෝෂ නිවැරදිද කියා තහවුරු කරන්න numerical gradient check එකක් ටෙස්ට් එකේ තියෙනවා.
+        </div>
+      </section>
+
+      <section id="snake">
+        <span class="kicker">06 · Snake</span>
+        <h2 class="mt-2">සර්ප මොළය</h2>
+        <p>
+          සර්පයාගේ මොළය කුඩායි: ආදාන 14ක්, සැඟවුණු 8ක් (tanh), නිමැවුම් 3ක්. ආදානවලට අනතුරු, දිශාව,
+          ආහාරයේ දිශාව සහ දුර, කුසගින්න, නිදහස් ඉඩ ඇතුළත්. නිමැවුම = වමට හැරෙන්න / කෙළින් යන්න / දකුණට හැරෙන්න.
+        </p>
+        <p>
+          ත්‍යාග (fitness) එක <code>score × 600 + shaping</code>. Shaping එක සැලකෙන්නේ සර්පයා ආහාරයට
+          <b>නවතම ලංවීමක්</b> ලබන විට පමණයි. මේක වැදගත්: එහෙම නොකළොත් ආහාරය ලඟ කැරකි කැරකි ඉන්න සර්පයෙකුට
+          “ලං වෙනවා → දුර යනවා → ලං වෙනවා” කියලා ලකුණු එකතු වෙනවා — ඒක වංචාවක්. ශ්‍රේෂ්ඨ අගය පමණක් ගණන්
+          කරන නිසා ඒ මාර්ගය වැහෙනවා.
+        </p>
+        <div class="detail-list">
+          <div class="detail-row"><span>ජාන (genome)</span><b>14×8 + 8 + 8×3 + 3 = 147</b></div>
+          <div class="detail-row"><span>ජනගහනය</span><b>120</b></div>
+          <div class="detail-row"><span>එක් පරම්පරාවක්</span><b>පියවර 700ක් උපරිම</b></div>
+          <div class="detail-row"><span>තේරීම</span><b>elite 10% + tournament(4)</b></div>
+        </div>
+      </section>
+
       <section id="language">
-        <span class="kicker">05 · Language</span>
+        <span class="kicker">07 · Language</span>
         <h2 class="mt-2">අකුරු අනාවැකි ආකෘතිය</h2>
         <p>
           මෙය අකුරු මට්ටමේ n-gram ආකෘතියක් (char-level n-gram). සිංහල සඳහා අකුරු වෙනුවට
@@ -170,7 +228,7 @@
       </section>
 
       <section id="honest">
-        <span class="kicker">06 · Honesty</span>
+        <span class="kicker">08 · Honesty</span>
         <h2 class="mt-2">මේක AI ද? ඇත්තටම.</h2>
         <p>
           මේවා සැබෑ ඇල්ගොරිතම — නියුරල් ජාල, genetic algorithm, සංඛ්‍යානමය භාෂා ආකෘතියක්. ඒත් ඒවා
@@ -181,7 +239,8 @@
           <li>අංක ලැබ් එක <b>තමන් ලියපු අංක</b> හඳුනාගනී — MNIST වගේ කිසිදු දත්ත ගොනුවක් භාවිතා නොකරයි.</li>
           <li>පුහුණු දත්ත ස්වයංක්‍රීයව ජනනය වන නිසා, ඒවා අතින් ලියූ අංකවලට වඩා “පිරිසිදු”යි. ඔබේ අකුරු වෙනස් නම් එය වරදින්න පුළුවන්.</li>
           <li>භාෂා ආකෘතියට අර්ථය තේරෙන්නේ නැහැ. එය රටා ගණන් කරනවා පමණයි.</li>
-          <li>ඩ්‍රෝන ලැබ් එකේ ප්‍රතිඵලය සසම්භාවී (stochastic) — හැම විටම එකම ලෙස වර්ධනය නොවේ.</li>
+          <li>ඩ්‍රෝන සහ සර්ප ලැබ්වල ප්‍රතිඵලය සසම්භාවී (stochastic) — හැම විටම එකම ලෙස වර්ධනය නොවේ.</li>
+          <li>සර්ප ලැබ් එකේ දී “විශිෂ්ට” සර්පයෙක් පිට වෙන්න පරම්පරා 30–60ක් ගත විය හැක. ඉවසීම අවශ්‍යයි.</li>
         </ul>
         <div class="callout">
           මේවා “දත්ත එකතු කරන AI නිෂ්පාදන” නොවේ. ඉගෙනීමේ යාන්ත්‍රණය ඇස්වලින් දැකගන්න හදපු
@@ -190,7 +249,7 @@
       </section>
 
       <section id="privacy">
-        <span class="kicker">07 · Privacy</span>
+        <span class="kicker">09 · Privacy</span>
         <h2 class="mt-2">ඔබේ දත්ත කොහේ යනවාද?</h2>
         <p>
           කොහේවත් යන්නේ නැහැ. ඔබ අඳින දේ, ලියන පෙළ, පුහුණු වන බර — සියල්ල බ්‍රව්සරයේ මතකයේ පමණයි.
@@ -200,14 +259,15 @@
       </section>
 
       <section id="stack">
-        <span class="kicker">08 · Stack</span>
+        <span class="kicker">10 · Stack</span>
         <h2 class="mt-2">තාක්ෂණය</h2>
         <div class="detail-list">
           <div class="detail-row"><span>Frontend</span><b>HTML · CSS · ES modules</b></div>
           <div class="detail-row"><span>ML engine</span><b>hand-written JS (Float32Array)</b></div>
+          <div class="detail-row"><span>Models</span><b>MLP · CNN · GA · n-gram</b></div>
           <div class="detail-row"><span>Dependencies</span><b>0 (runtime)</b></div>
           <div class="detail-row"><span>Server</span><b>~90-line Node static server</b></div>
-          <div class="detail-row"><span>Tests</span><b>node --test style scripts</b></div>
+          <div class="detail-row"><span>Tests</span><b>node --test · incl. gradient checks</b></div>
         </div>
         <p class="mt-3">
           සියලුම core ගොනු <code>assets/js/core/</code> තුළ. ඔබට <code>mlp.js</code> කියවලා optimizer එක

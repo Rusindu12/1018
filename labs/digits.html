@@ -27,7 +27,12 @@
       <a href="text.html">අකුරු අනාවැකි</a>
       <a href="../about.html">වැඩ කරන විදිය</a>
     </nav>
-    <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+    <div class="nav-actions">
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="තේමාව මාරු කරන්න" title="තේමාව මාරු කරන්න">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" stroke-linecap="round"/></svg>
+      </button>
+      <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+    </div>
   </div>
 </header>
 
@@ -47,7 +52,7 @@
         <span class="panel-label">ආකෘතිය</span>
         <div class="detail-list mt-2">
           <div class="detail-row"><span>ගොනුව</span><b>16×16 = 256</b></div>
-          <div class="detail-row"><span>සැඟවුණු ස්ථර</span><b>64 → 32</b></div>
+          <div class="detail-row"><span>සැඟවුණු ස්ථර</span><b>64 → 32 (හෝ CNN)</b></div>
           <div class="detail-row"><span>නිමැවුම</span><b>10 පන්ති</b></div>
           <div class="detail-row"><span>optimizer</span><b>Adam</b></div>
         </div>
@@ -126,6 +131,11 @@
           <span class="panel-label">පුහුණුව</span>
           <span class="mono dim" style="font-size:10.5px;letter-spacing:.1em;">LIVE</span>
         </div>
+        <div class="seg mt-2" role="group" aria-label="ආකෘතිය තෝරන්න" style="width:100%;">
+          <button data-model="mlp" class="on" style="flex:1;">MLP</button>
+          <button data-model="cnn" style="flex:1;">CNN</button>
+        </div>
+        <p class="dim" id="modelNote" style="font-size:11.5px;margin-top:6px;">MLP: 256→64→32→10 · 12 epochs · ~2s</p>
         <p id="trainStatus" style="font-size:12.5px;line-height:1.55;color:var(--ink);margin-top:6px;">ආරම්භ වෙමින්…</p>
         <div class="progress mt-2"><i id="progressBar"></i></div>
         <div class="stat-grid mt-3">

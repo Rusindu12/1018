@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>NeuraLab — බ්‍රව්සරයේම ඉගෙන ගන්නා AI</title>
-<meta name="description" content="ක්ලවුඩ් නැතුව, API key නැතුව බ්‍රව්සරය තුළම train වන සැබෑ machine learning පරීක්ෂණ තුනක්: neuroevolution, digit recognition, n-gram language model." />
+<meta name="description" content="ක්ලවුඩ් නැතුව, API key නැතුව බ්‍රව්සරය තුළම train වන සැබෑ machine learning පරීක්ෂණ හතරක්: neuroevolution, digit recognition, n-gram language model." />
 <meta name="theme-color" content="#06080c" />
 <meta property="og:title" content="NeuraLab — බ්‍රව්සරයේම ඉගෙන ගන්නා AI" />
 <meta property="og:description" content="පුහුණු වෙන නියුරල් ජාල, පරිණාමය වන ඩ්‍රෝන, අකුරු අනාවැකි — මුළුමනින්ම ඔබේ බ්‍රව්සරය තුළ." />
@@ -27,10 +27,16 @@
       <a href="index.html" class="active">මුල් පිටුව</a>
       <a href="labs/drone.html">පියාඹන මොළය</a>
       <a href="labs/digits.html">අංක හඳුනාගැනීම</a>
+      <a href="labs/snake.html">සර්ප මොළය</a>
       <a href="labs/text.html">අකුරු අනාවැකි</a>
       <a href="about.html">වැඩ කරන විදිය</a>
     </nav>
-    <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+    <div class="nav-actions">
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="තේමාව මාරු කරන්න" title="තේමාව මාරු කරන්න">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" stroke-linecap="round"/></svg>
+      </button>
+      <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+    </div>
   </div>
 </header>
 
@@ -59,8 +65,8 @@
         <span><i></i> npm dependencies 0ක්</span>
       </div>
       <div class="badge-row">
-        <span class="badge"><b>3</b> සජීවී පරීක්ෂණ</span>
-        <span class="badge"><b>~19k</b> trainable parameters</span>
+        <span class="badge"><b>4</b> සජීවී පරීක්ෂණ</span>
+        <span class="badge"><b>~26k</b> trainable parameters</span>
         <span class="badge"><b>60fps</b> සිමියුලේෂන්</span>
       </div>
     </div>
@@ -71,14 +77,14 @@
       <div class="between">
         <div>
           <span class="kicker">The labs</span>
-          <h2 class="mt-2">ලැබ් තුනක්.<br />එකම ඔබ ඉදිරියේ.</h2>
+          <h2 class="mt-2">ලැබ් හතරක්.<br />එකම ඔබ ඉදිරියේ.</h2>
         </div>
         <p class="lead" style="max-width: 38ch; margin-bottom: 6px;">
           කිසිම model එකක් පෙර-පුහුණු නොකළ එකක්. හැම එකක්ම ඔබ බලා සිටියදී මුල ඉඳන් ඉගෙන ගන්නවා.
         </p>
       </div>
 
-      <div class="labs-grid">
+      <div class="labs-grid four">
         <a class="lab-card reveal" href="labs/drone.html" style="--accent: rgba(90,217,255,0.18);">
           <div class="between">
             <span class="lab-num">01 / NEUROEVOLUTION</span>
@@ -92,9 +98,22 @@
           <div class="lab-foot"><span>සිමියුලේෂන් එකට යන්න</span><span class="arrow">→</span></div>
         </a>
 
+        <a class="lab-card reveal" href="labs/snake.html" style="--accent: rgba(255,194,102,0.16);">
+          <div class="between">
+            <span class="lab-num">02 / EVOLUTION</span>
+            <span class="tag">GA + NN</span>
+          </div>
+          <div class="glyph" style="color:#ffc266">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 18c0-3 3-3 5-3s4 0 4-3-2-3-4-3-4 0-4-3 2-3 4-3h5" stroke-linecap="round"/><circle cx="18.5" cy="4.5" r="1.5"/></svg>
+          </div>
+          <h3 class="si-text">සර්ප මොළය</h3>
+          <p class="si-text">සර්පයන් 120ක් එකම වේලාවට. ආහාර හොයාගන්න, බිත්තිවලින් බේරෙන්න, තමන්ගේම වලිගයේ නොගැටෙන්න — හැම දෙයක්ම පරම්පරා හරහා උපදිනවා.</p>
+          <div class="lab-foot"><span>පුහුණුව බලන්න</span><span class="arrow">→</span></div>
+        </a>
+
         <a class="lab-card reveal" href="labs/digits.html" style="--accent: rgba(185,255,92,0.16);">
           <div class="between">
-            <span class="lab-num">02 / SUPERVISED</span>
+            <span class="lab-num">03 / SUPERVISED</span>
             <span class="tag">MLP</span>
           </div>
           <div class="glyph" style="color:#b9ff5c">
@@ -107,7 +126,7 @@
 
         <a class="lab-card reveal" href="labs/text.html" style="--accent: rgba(169,139,255,0.18);">
           <div class="between">
-            <span class="lab-num">03 / LANGUAGE</span>
+            <span class="lab-num">04 / LANGUAGE</span>
             <span class="tag">N-GRAM</span>
           </div>
           <div class="glyph" style="color:#a98bff">
@@ -120,10 +139,10 @@
       </div>
 
       <div class="stats-strip reveal">
-        <div class="stat"><b data-count="3">0</b><span>සජීවී පරීක්ෂණ</span></div>
+        <div class="stat"><b data-count="4">0</b><span>සජීවී පරීක්ෂණ</span></div>
         <div class="stat"><b data-count="100" data-suffix="%">0</b><span>බ්‍රව්සරය තුළම</span></div>
         <div class="stat"><b data-count="0">0</b><span>server requests</span></div>
-        <div class="stat"><b data-count="19" data-suffix="k+">0</b><span>trainable weights</span></div>
+        <div class="stat"><b data-count="26" data-suffix="k+">0</b><span>trainable weights</span></div>
       </div>
     </div>
   </section>
@@ -205,10 +224,10 @@
       <div class="between">
         <div>
           <span class="kicker">Three flavours of learning</span>
-          <h2 class="mt-2">එක AI එකක් නෙවෙයි.<br />ක්‍රම තුනක්.</h2>
+          <h2 class="mt-2">එක AI එකක් නෙවෙයි.<br />ක්‍රම හතරක්.</h2>
         </div>
       </div>
-      <div class="labs-grid">
+      <div class="labs-grid four">
         <div class="panel reveal">
           <span class="panel-label">Supervised</span>
           <h3 class="mt-2 si-text">උදාහරණ දීලා උගන්වනවා</h3>
@@ -227,6 +246,16 @@
             <div class="detail-row"><span>දත්ත</span><b>අවශ්‍ය නැහැ</b></div>
             <div class="detail-row"><span>සංඥාව</span><b>fitness</b></div>
             <div class="detail-row"><span>උදාහරණය</span><b>GA + NN</b></div>
+          </div>
+        </div>
+        <div class="panel reveal">
+          <span class="panel-label">Deep learning</span>
+          <h3 class="mt-2 si-text">පික්සෙල් රටා තේරුම් ගන්නවා</h3>
+          <p class="muted mt-2" style="font-size: 14px;">CNN එකක් රූපය කොටස් වශයෙන් බලනවා — කොන්, වක්‍ර, රේඛා. අංක ලැබ් එකේ MLP එකට අමතරව CNN එකක් තෝරන්නත් පුළුවන්.</p>
+          <div class="detail-list mt-3">
+            <div class="detail-row"><span>ස්ථර</span><b>conv → pool → conv</b></div>
+            <div class="detail-row"><span>parameters</span><b>7,226</b></div>
+            <div class="detail-row"><span>backprop</span><b>අතින් ලියා ඇත</b></div>
           </div>
         </div>
         <div class="panel reveal">
@@ -252,6 +281,7 @@
         <div class="hero-actions">
           <a class="btn btn-primary" href="labs/drone.html">පියාඹන මොළය දෙසට</a>
           <a class="btn" href="labs/digits.html">අංකයක් අඳින්න</a>
+          <a class="btn" href="labs/snake.html">සර්පයෙක් පුහුණු කරන්න</a>
           <a class="btn btn-ghost" href="labs/text.html">අකුරු අනාවැකි</a>
         </div>
       </div>

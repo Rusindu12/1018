@@ -1,4 +1,5 @@
 import { MLP } from '../core/mlp.js';
+import { CNN } from '../core/cnn.js';
 import { renderGlyph, normaliseGrid, GRID, CLASSES } from '../core/digits.js';
 import { mulberry32 } from '../core/rng.js';
 import { initNav, revealOnScroll, drawLineChart, toast, $ } from '../ui.js';
@@ -35,7 +36,17 @@ const chipsEl = $('#teachChips');
 const trainBtn = $('#retrainBtn');
 const clearBtn = $('#clearBtn');
 
-const config = { perClass: 70, epochs: 12, batch: 32, hidden: [64, 32] };
+const MODELS = {
+  mlp: { perClass: 70, epochs: 12, batch: 32, lr: 0.0016, hidden: [64, 32], testPerClass: 14 },
+  cnn: { perClass: 55, epochs: 20, batch: 24, lr: 0.005, testPerClass: 8 },
+};
+let modelKind = 'mlp';
+let config = MODELS[modelKind];
+
+function makeModel(seed) {
+  if (modelKind === 'cnn') return new CNN({ seed, lr: config.lr });
+  return new MLP([GRID * GRID, ...config.hidden, 10], { seed, l2: 1e-4 });
+}
 const train = { X: [], y: [] };
 const test = { X: [], y: [] };
 let net = null;
@@ -240,6 +251,7 @@ function setStatus(text, progress = null) {
 }
 
 async function buildAndTrain({ fresh = true, epochs = config.epochs } = {}) {
+  epochs = config.epochs;
   if (busy) return;
   busy = true;
   train.X = [];
@@ -257,7 +269,7 @@ async function buildAndTrain({ fresh = true, epochs = config.epochs } = {}) {
   await nextTick();
 
   const rng = mulberry32(fresh ? (Math.random() * 1e9) | 0 : 4242);
-  const total = 10 * config.perClass + 10 * 14;
+  const total = 10 * config.perClass + 10 * config.testPerClass;
   let made = 0;
 
   for (let d = 0; d < 10; d += 1) {
@@ -276,14 +288,14 @@ async function buildAndTrain({ fresh = true, epochs = config.epochs } = {}) {
     }
   }
   for (let d = 0; d < 10; d += 1) {
-    for (let i = 0; i < 14; i += 1) {
+    for (let i = 0; i < config.testPerClass; i += 1) {
       test.X.push(renderGlyph(d, mulberry32(9001 + i * 31 + d), {}));
       test.y.push(d);
     }
   }
   sampleStat.textContent = train.X.length.toLocaleString();
 
-  net = new MLP([GRID * GRID, ...config.hidden, 10], { seed: fresh ? (Math.random() * 1e6) | 0 : 11, l2: 1e-4 });
+  net = makeModel(fresh ? (Math.random() * 1e6) | 0 : 11);
   paramStat.textContent = net.paramCount.toLocaleString();
   lossHistory = [net.lastLoss || Math.log(10)];
   accHistory = [0];
@@ -298,7 +310,7 @@ async function buildAndTrain({ fresh = true, epochs = config.epochs } = {}) {
       const idx = order.slice(i, i + config.batch);
       const bx = idx.map((k) => train.X[k]);
       const by = idx.map((k) => train.y[k]);
-      net.trainBatch(bx, by, 0.0016);
+      net.trainBatch(bx, by, config.lr);
       if (i % (config.batch * 4) === 0) {
         const p = 0.15 + (e / epochs) * 0.85;
         setStatus(`පුහුණු වෙමින්… epoch ${e + 1}/${epochs}`, p);
@@ -432,12 +444,12 @@ teachBtn.addEventListener('click', async () => {
   sampleStat.textContent = train.X.length.toLocaleString();
   setStatus(`ඔබේ උදාහරණය එකතු විය · නැවත පුහුණු වෙමින්…`, 0.3);
   await nextTick();
-  const epochs = 3;
+  const epochs = modelKind === 'cnn' ? 2 : 3;
   for (let e = 0; e < epochs; e += 1) {
     const idx = Array.from({ length: train.X.length }, (_, i) => i);
     for (let i = 0; i < idx.length; i += config.batch) {
       const slice = idx.slice(i, i + config.batch);
-      net.trainBatch(slice.map((k) => train.X[k]), slice.map((k) => train.y[k]), 0.0012);
+      net.trainBatch(slice.map((k) => train.X[k]), slice.map((k) => train.y[k]), config.lr * 0.8);
       if (i % (config.batch * 8) === 0) await nextTick();
     }
     setStatus(`ඔබේ දත්ත සමඟ පුහුණු වෙමින්… ${e + 1}/${epochs}`, 0.3 + ((e + 1) / epochs) * 0.7);
@@ -475,4 +487,17 @@ buildChips();
 resetCanvas();
 drawLoss();
 buildAndTrain();
+
+document.querySelectorAll('[data-model]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    if (busy || btn.dataset.model === modelKind) return;
+    modelKind = btn.dataset.model;
+    config = MODELS[modelKind];
+    document.querySelectorAll('[data-model]').forEach((b) => b.classList.toggle('on', b === btn));
+    $('#modelNote').textContent = modelKind === 'cnn'
+      ? 'CNN: 6 + 12 filters · 20 epochs · ~4s (වඩා නිරවද්‍ය)'
+      : 'MLP: 256→64→32→10 · 12 epochs · ~2s';
+    buildAndTrain({ fresh: true });
+  });
+});
 window.addEventListener('resize', () => drawLoss());
