@@ -25,7 +25,6 @@ ai_binance_trader.db
 
 # Node (if any tooling)
 node_modules/
-dist/
 
 # Android / Gradle
 .gradle/
@@ -49,3 +48,8 @@ Thumbs.db
 # Logs
 logs/
 *.log
+# Allow distributed APK artifact for demo
+!dist/*.apk
+!dist/*.aab
+!dist/*.zip
+!dist/index.html
