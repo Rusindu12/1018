@@ -32,7 +32,12 @@ light/dark theme toggle (remembered in `localStorage`, respecting `prefers-color
 
 ## Deploy it
 
-The site is static — no build step. See **[DEPLOY.md](DEPLOY.md)** for the exact steps.
+**Live now:** <https://neuralab-seven.vercel.app> — forwards to the site itself, which is served
+straight from this repository's `main` branch:
+<https://cdn.jsdelivr.net/gh/Rusindu12/1018@main/index.html>
+
+The site is static — no build step. See **[DEPLOY.md](DEPLOY.md)** for the exact steps and for the
+two one-click upgrades that move it onto a native GitHub Pages / Vercel deployment.
 
 - **GitHub Pages** — `.github/workflows/pages.yml` publishes `main` on every push. One-time:
   *Settings → Pages → Source = GitHub Actions*.

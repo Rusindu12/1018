@@ -3,6 +3,28 @@
 NeuraLab is a **pure static site**: HTML, CSS and ES modules. There is no build step, no environment
 variable and no server-side code in production (`server.js` is only a convenience for local previews).
 
+## Live right now
+
+| URL | What it is |
+|-----|------------|
+| <https://neuralab-seven.vercel.app> | short link; forwards to the site below |
+| <https://cdn.jsdelivr.net/gh/Rusindu12/1018@main/index.html> | the site, served straight from this repository's `main` branch by jsDelivr's global CDN |
+
+Both are public and need no build step: jsDelivr reads the files from GitHub, so every push to
+`main` (after its ~12 h cache expires) updates the live site. Nothing has to be installed or run.
+
+### Making it a native deployment (two one-click upgrades)
+
+A native host serves the files itself instead of mirroring them. Both need a permission that only the
+repository owner can grant, which is why they are not done yet:
+
+1. **GitHub Pages** — *Settings → Pages → Source = GitHub Actions*. The included
+   `.github/workflows/pages.yml` then publishes `https://<user>.github.io/1018/` on every push to
+   `main`. (Without that setting the workflow stops at the *Setup Pages* step.)
+2. **Vercel** — *Account Settings → Authentication → Login Connections → connect GitHub*, then import
+   `Rusindu12/1018` as a project (Framework preset: **Other**, no build command, output directory `.`).
+   `vercel.json` already sets the security and cache headers, and every push to `main` re-deploys.
+
 That means it runs anywhere that can serve files. Below are the paths that are pre-configured in
 this repository.
 
