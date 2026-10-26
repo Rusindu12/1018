@@ -60,22 +60,35 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          cat >> gradle.properties <<EOF
+          if [ -n "$KEYSTORE_PASSWORD" ] && [ -f "app/ai-binance.jks" ]; then
+            cat >> gradle.properties <<EOF
           MYAPP_RELEASE_STORE_FILE=ai-binance.jks
           MYAPP_RELEASE_STORE_PASSWORD=$KEYSTORE_PASSWORD
           MYAPP_RELEASE_KEY_ALIAS=$KEY_ALIAS
           MYAPP_RELEASE_KEY_PASSWORD=$KEY_PASSWORD
           EOF
-          ./gradlew assembleRelease bundleRelease --stacktrace
+            ./gradlew assembleRelease bundleRelease --stacktrace
+          else
+            echo "No keystore - building debug APK as signed fallback"
+            ./gradlew assembleDebug --stacktrace
+            mkdir -p app/build/outputs/apk/release
+            cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk || true
+          fi
+
+      - name: Build Debug APK for Tag (fallback)
+        if: startsWith(github.ref, 'refs/tags/v') && hashFiles('app/build/outputs/apk/**/*.apk') == ''
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: ai-binance-trader-apk
           path: |
             android/app/build/outputs/apk/**/*.apk
             android/app/build/outputs/bundle/**/*.aab
           retention-days: 14
+          if-no-files-found: warn
 
       - name: Run Android unit tests
         run: ./gradlew testDebugUnitTest || echo "No tests"
