@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const PAGES = ['index.html', 'about.html', 'labs/drone.html', 'labs/digits.html', 'labs/snake.html', 'labs/text.html'];
+const PAGES = ['index.html', 'about.html', '404.html', 'labs/drone.html', 'labs/digits.html', 'labs/snake.html', 'labs/text.html'];
 
 test('every local href/src in the pages exists', async () => {
   const missing = [];
@@ -97,6 +97,10 @@ test('server serves pages, assets and a 404', async () => {
 
     const lab = await fetch(`${base}/labs/digits.html`);
     assert.equal(lab.status, 200);
+
+    const custom404 = await fetch(`${base}/404.html`);
+    assert.equal(custom404.status, 200);
+    assert.match(await custom404.text(), /404/);
 
     const missing = await fetch(`${base}/nope.html`);
     assert.equal(missing.status, 404);
