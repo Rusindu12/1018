@@ -77,11 +77,7 @@ dependencies {
     // Security — encrypted preferences
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-    // WS
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
-    // Charts
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    // Charts (Vico on mavenCentral, MPAndroidChart via jitpack removed for CI stability)
     implementation("com.patrykandpatrick.vico:compose:1.13.1")
     implementation("com.patrykandpatrick.vico:compose-m3:1.13.1")
 
@@ -90,7 +86,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
 
     // Utils
-    implementation("coil-compose:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
