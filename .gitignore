@@ -1,5 +1,51 @@
 # Object file
 *.o
-
 # Ada Library Information
 *.ali
+
+# Env & secrets
+.env
+backend/.env
+*.jks
+*.keystore
+*.p8
+local.properties
+google-services.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+ai_binance_trader.db
+*.db
+
+# Node (if any tooling)
+node_modules/
+dist/
+
+# Android / Gradle
+.gradle/
+build/
+android/build/
+android/app/build/
+android/.gradle/
+*.apk
+*.aab
+!android/app/src/**/*.apk
+local.properties
+proguard/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
