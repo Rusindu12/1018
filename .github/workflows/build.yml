@@ -37,7 +37,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: "17" }
-      - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v3
 
       - name: Decode keystore
@@ -49,6 +48,13 @@ jobs:
             echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/ai-binance.jks
             echo "Keystore decoded"
           fi
+
+      - name: Setup Android SDK path
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          cat local.properties
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls $ANDROID_HOME 2>&1 | head -n 20
 
       - name: Make gradlew executable
         run: chmod +x gradlew
