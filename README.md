@@ -30,6 +30,16 @@ device.
 All four are bilingual (Sinhala first, English secondary), responsive, and ship with a
 light/dark theme toggle (remembered in `localStorage`, respecting `prefers-color-scheme`).
 
+## Deploy it
+
+The site is static — no build step. See **[DEPLOY.md](DEPLOY.md)** for the exact steps.
+
+- **GitHub Pages** — `.github/workflows/pages.yml` publishes `main` on every push. One-time:
+  *Settings → Pages → Source = GitHub Actions*.
+- **Vercel** — `vercel.json` is ready; connect GitHub under *Login Connections* and import the repo,
+  or run `vercel --prod` locally.
+- **Netlify / Cloudflare / S3 / nginx** — publish the repository root as-is.
+
 ## Run it
 
 ```bash
