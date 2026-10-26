@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NeuraLab — බ්‍රව්සරයේම ඉගෙන ගන්නා AI</title>
+<meta name="description" content="ක්ලවුඩ් නැතුව, API key නැතුව බ්‍රව්සරය තුළම train වන සැබෑ machine learning පරීක්ෂණ හතරක්: neuroevolution, digit recognition, n-gram language model." />
+<meta name="theme-color" content="#06080c" />
+<meta property="og:title" content="NeuraLab — බ්‍රව්සරයේම ඉගෙන ගන්නා AI" />
+<meta property="og:description" content="පුහුණු වෙන නියුරල් ජාල, පරිණාමය වන ඩ්‍රෝන, අකුරු අනාවැකි — මුළුමනින්ම ඔබේ බ්‍රව්සරය තුළ." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23b9ff5c'/%3E%3Cstop offset='0.5' stop-color='%235ad9ff'/%3E%3Cstop offset='1' stop-color='%23a98bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ccircle cx='20' cy='24' r='5' fill='%2307100a'/%3E%3Ccircle cx='44' cy='20' r='5' fill='%2307100a'/%3E%3Ccircle cx='32' cy='44' r='5' fill='%2307100a'/%3E%3Cpath d='M24 22l16-1M22 28l8 12M41 24l-6 16' stroke='%2307100a' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="NeuraLab මුල් පිටුව">
+      <span class="brand-mark">N</span>
+      <span>NeuraLab<small style="display:block;line-height:1">in-browser AI</small></span>
+    </a>
+    <nav class="nav-links" aria-label="ප්‍රධාන මෙනුව">
+      <a href="index.html" class="active">මුල් පිටුව</a>
+      <a href="labs/drone.html">පියාඹන මොළය</a>
+      <a href="labs/digits.html">අංක හඳුනාගැනීම</a>
+      <a href="labs/snake.html">සර්ප මොළය</a>
+      <a href="labs/text.html">අකුරු අනාවැකි</a>
+      <a href="about.html">වැඩ කරන විදිය</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="තේමාව මාරු කරන්න" title="තේමාව මාරු කරන්න">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" stroke-linecap="round"/></svg>
+      </button>
+      <button class="nav-toggle" aria-label="මෙනුව විවෘත කරන්න" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <canvas id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <span class="kicker">Browser-native machine learning</span>
+      <h1>මොළයක් හදමු<em class="grad">ඔබ ඉදිරියේම.</em></h1>
+      <p class="lead si-text">
+        ක්ලවුඩ් නැහැ. API key නැහැ. දත්ත කොහේවත් යන්නේ නැහැ.
+        ඔබේම බ්‍රව්සරය තුළ සැබෑ නියුරල් ජාලයක් පුහුණු වෙන හැටි —
+        පරම්පරා ගණනාවක්, අකුරු දහස් ගණනක්, ක්ෂණික ප්‍රතිචාර — දැන්ම බලන්න.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#labs">
+          ලැබ් එකක් තෝරන්න
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="about.html">මේක වැඩ කරන්නේ කොහොමද?</a>
+      </div>
+      <div class="hero-meta">
+        <span><i></i> පූර්ණයෙන්ම client-side JavaScript</span>
+        <span><i></i> server එකට යන දත්ත 0ක්</span>
+        <span><i></i> npm dependencies 0ක්</span>
+      </div>
+      <div class="badge-row">
+        <span class="badge"><b>4</b> සජීවී පරීක්ෂණ</span>
+        <span class="badge"><b>~26k</b> trainable parameters</span>
+        <span class="badge"><b>60fps</b> සිමියුලේෂන්</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="labs" style="padding-top: 20px;">
+    <div class="wrap">
+      <div class="between">
+        <div>
+          <span class="kicker">The labs</span>
+          <h2 class="mt-2">ලැබ් හතරක්.<br />එකම ඔබ ඉදිරියේ.</h2>
+        </div>
+        <p class="lead" style="max-width: 38ch; margin-bottom: 6px;">
+          කිසිම model එකක් පෙර-පුහුණු නොකළ එකක්. හැම එකක්ම ඔබ බලා සිටියදී මුල ඉඳන් ඉගෙන ගන්නවා.
+        </p>
+      </div>
+
+      <div class="labs-grid four">
+        <a class="lab-card reveal" href="labs/drone.html" style="--accent: rgba(90,217,255,0.18);">
+          <div class="between">
+            <span class="lab-num">01 / NEUROEVOLUTION</span>
+            <span class="tag">GA + NN</span>
+          </div>
+          <div class="glyph" style="color:#5ad9ff">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l4 5-4 13-4-13 4-5Z"/><path d="M4 8h4M16 8h4M4 13h4M16 13h4" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="si-text">පියාඹන මොළය</h3>
+          <p class="si-text">පරම්පරා සිය ගණනක් තුළ ඩ්‍රෝන රැළක් අවහිර හරහා පියාඹන්න ඉගෙන ගන්නවා. දත්ත නැහැ — තියෙන්නේ තේරීම, හරස් වීම සහ විකෘතිය පමණයි.</p>
+          <div class="lab-foot"><span>සිමියුලේෂන් එකට යන්න</span><span class="arrow">→</span></div>
+        </a>
+
+        <a class="lab-card reveal" href="labs/snake.html" style="--accent: rgba(255,194,102,0.16);">
+          <div class="between">
+            <span class="lab-num">02 / EVOLUTION</span>
+            <span class="tag">GA + NN</span>
+          </div>
+          <div class="glyph" style="color:#ffc266">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 18c0-3 3-3 5-3s4 0 4-3-2-3-4-3-4 0-4-3 2-3 4-3h5" stroke-linecap="round"/><circle cx="18.5" cy="4.5" r="1.5"/></svg>
+          </div>
+          <h3 class="si-text">සර්ප මොළය</h3>
+          <p class="si-text">සර්පයන් 120ක් එකම වේලාවට. ආහාර හොයාගන්න, බිත්තිවලින් බේරෙන්න, තමන්ගේම වලිගයේ නොගැටෙන්න — හැම දෙයක්ම පරම්පරා හරහා උපදිනවා.</p>
+          <div class="lab-foot"><span>පුහුණුව බලන්න</span><span class="arrow">→</span></div>
+        </a>
+
+        <a class="lab-card reveal" href="labs/digits.html" style="--accent: rgba(185,255,92,0.16);">
+          <div class="between">
+            <span class="lab-num">03 / SUPERVISED</span>
+            <span class="tag">MLP</span>
+          </div>
+          <div class="glyph" style="color:#b9ff5c">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 14c0-3 1.5-5 4-5s4 2 4 5" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="si-text">අඳින අතේ අංකය</h3>
+          <p class="si-text">ඔබ canvas එකේ අඳින අංකය 16×16 ග්‍රිඩ් එකක් බවට හරවා, ඔබේ බ්‍රව්සරයේම පුහුණු වූ නියුරල් ජාලයක් එය හඳුනා ගන්නවා. තමන්ගේම දත්ත එකතු කරලා එයට උගන්වන්නත් පුළුවන්.</p>
+          <div class="lab-foot"><span>අඳින්න පටන් ගන්න</span><span class="arrow">→</span></div>
+        </a>
+
+        <a class="lab-card reveal" href="labs/text.html" style="--accent: rgba(169,139,255,0.18);">
+          <div class="between">
+            <span class="lab-num">04 / LANGUAGE</span>
+            <span class="tag">N-GRAM</span>
+          </div>
+          <div class="glyph" style="color:#a98bff">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7" stroke-linecap="round"/><path d="M17 15l3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="si-text">අකුරු අනාවැකි</h3>
+          <p class="si-text">සිංහල හෝ ඉංග්‍රීසි පෙළක් දීලා, ඊළඟ අකුර අනාවැකි කියන ආකෘතියක් පුහුණු කරන්න. උෂ්ණත්වය වෙනස් කරද්දී එය “නිර්මාණශීලී” වෙන හැටි බලන්න.</p>
+          <div class="lab-foot"><span>ලියන්න පටන් ගන්න</span><span class="arrow">→</span></div>
+        </a>
+      </div>
+
+      <div class="stats-strip reveal">
+        <div class="stat"><b data-count="4">0</b><span>සජීවී පරීක්ෂණ</span></div>
+        <div class="stat"><b data-count="100" data-suffix="%">0</b><span>බ්‍රව්සරය තුළම</span></div>
+        <div class="stat"><b data-count="0">0</b><span>server requests</span></div>
+        <div class="stat"><b data-count="26" data-suffix="k+">0</b><span>trainable weights</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 20px;">
+    <div class="wrap explain-grid">
+      <div class="reveal">
+        <span class="kicker">How it works</span>
+        <h2 class="mt-2">යන්ත්‍රයක් ඉගෙන ගන්නේ<br />කොහොමද?</h2>
+        <p class="lead mt-3">හැම ලැබ් එකකුත් එකම ප්‍රධාන අදහසක් උඩ තමයි තියෙන්නේ — අනුමාන කරන්න, වැරැද්ද මනින්න, ඊට පස්සේ ඒ වැරැද්ද අඩු වෙන්න බර ටිකක් වෙනස් කරන්න.</p>
+        <div class="steps">
+          <div class="step">
+            <span class="step-ico">01</span>
+            <div><h4>දත්ත හෝ පරිසරය</h4><p>අංක ලැබ් එකේදී පින්තූර 16×16 කොටු. ඩ්‍රෝන ලැබ් එකේදී “ඉදිරියේ අවහිරය කොහෙද” කියන සංවේදන 4.</p></div>
+          </div>
+          <div class="step">
+            <span class="step-ico">02</span>
+            <div><h4>ඉදිරි ගමන</h4><p>බර සහ bias එකතු කරලා, ReLU හරහා, අවසානයේ softmax. එක් එක් පන්තියට සම්භාවිතාවක් ලැබෙනවා.</p></div>
+          </div>
+          <div class="step">
+            <span class="step-ico">03</span>
+            <div><h4>දෝෂය මැනීම</h4><p>හරි පිළිතුරට දුන් සම්භාවිතාවේ −log. වැරැද්ද ලොකු නම් දඬුවම ලොකුයි.</p></div>
+          </div>
+          <div class="step">
+            <span class="step-ico">04</span>
+            <div><h4>පසුපස ගමන</h4><p>gradient එක ගණනය කරලා Adam optimizer එකෙන් හැම බරක්ම ටිකෙන් ටික හදනවා. ඒකයි “ඉගෙනීම”.</p></div>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <a class="btn" href="about.html">සම්පූර්ණ පැහැදිලි කිරීම කියවන්න →</a>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <svg class="net-diagram" viewBox="0 0 480 330" role="img" aria-label="නියුරල් ජාලයක සැකසුම">
+          <defs>
+            <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#5ad9ff" stop-opacity="0.12"/>
+              <stop offset="0.5" stop-color="#b9ff5c" stop-opacity="0.4"/>
+              <stop offset="1" stop-color="#a98bff" stop-opacity="0.14"/>
+            </linearGradient>
+            <linearGradient id="pulseGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#5ad9ff"/>
+              <stop offset="1" stop-color="#b9ff5c"/>
+            </linearGradient>
+          </defs>
+          <g stroke="url(#lineGrad)" stroke-width="1">
+            <path d="M92 78 L206 62M92 78 L206 122M92 78 L206 182M92 78 L206 242M92 165 L206 62M92 165 L206 122M92 165 L206 182M92 165 L206 242M92 252 L206 62M92 252 L206 122M92 252 L206 182M92 252 L206 242M206 62 L318 92M206 62 L318 165M206 62 L318 238M206 122 L318 92M206 122 L318 165M206 122 L318 238M206 182 L318 92M206 182 L318 165M206 182 L318 238M206 242 L318 92M206 242 L318 165M206 242 L318 238M318 92 L414 128M318 92 L414 202M318 165 L414 128M318 165 L414 202M318 238 L414 128M318 238 L414 202"/>
+          </g>
+          <g>
+            <g fill="#5ad9ff"><circle cx="92" cy="78" r="10"/><circle cx="92" cy="165" r="10"/><circle cx="92" cy="252" r="10"/></g>
+            <g fill="#b9ff5c"><circle cx="206" cy="62" r="10"/><circle cx="206" cy="122" r="10"/><circle cx="206" cy="182" r="10"/><circle cx="206" cy="242" r="10"/></g>
+            <g fill="#b9ff5c"><circle cx="318" cy="92" r="10"/><circle cx="318" cy="165" r="10"/><circle cx="318" cy="238" r="10"/></g>
+            <g fill="#a98bff"><circle cx="414" cy="128" r="12"/><circle cx="414" cy="202" r="12"/></g>
+          </g>
+          <g fill="#06080c" font-family="ui-monospace, monospace" font-size="10">
+            <text x="74" y="292">input</text><text x="186" y="292">hidden 1</text><text x="298" y="292">hidden 2</text><text x="392" y="292">output</text>
+          </g>
+          <g fill="none" stroke="#b9ff5c" stroke-width="2.2" stroke-linecap="round" opacity="0.9">
+            <path d="M108 82 L190 66"><animate attributeName="opacity" values="0.2;1;0.2" dur="2.4s" repeatCount="indefinite"/></path>
+            <path d="M222 128 L302 160"><animate attributeName="opacity" values="1;0.2;1" dur="2.9s" repeatCount="indefinite"/></path>
+            <path d="M334 172 L398 196"><animate attributeName="opacity" values="0.3;1;0.3" dur="2.1s" repeatCount="indefinite"/></path>
+          </g>
+          <g fill="#e9eff7" font-family="ui-monospace, monospace" font-size="10" opacity="0.42">
+            <text x="46" y="30">x₁ … x₂₅₆</text>
+            <text x="380" y="30">softmax → p(0…9)</text>
+          </g>
+        </svg>
+        <div class="panel panel-tight mt-3">
+          <p class="quote si-text">“ඉගෙනීම කියන්නේ මතක තබා ගැනීම නොවේ. වැරැද්දින් පසුව බර ටිකක් වෙනස් කරගැනීමයි.”</p>
+          <p class="dim mt-2 mono">— NeuraLab, පළවෙනි පරම්පරාව</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 10px;">
+    <div class="wrap">
+      <div class="between">
+        <div>
+          <span class="kicker">Three flavours of learning</span>
+          <h2 class="mt-2">එක AI එකක් නෙවෙයි.<br />ක්‍රම හතරක්.</h2>
+        </div>
+      </div>
+      <div class="labs-grid four">
+        <div class="panel reveal">
+          <span class="panel-label">Supervised</span>
+          <h3 class="mt-2 si-text">උදාහරණ දීලා උගන්වනවා</h3>
+          <p class="muted mt-2" style="font-size: 14px;">“මේ පින්තූරය 3” කියලා දහස් වතාවක් කියලා, model එකට තමන්ගේම පිළිතුරු හදාගන්න ඉඩ දෙනවා. අංක ලැබ් එක මේ ක්‍රමයයි.</p>
+          <div class="detail-list mt-3">
+            <div class="detail-row"><span>දත්ත</span><b>ලේබල් කළ</b></div>
+            <div class="detail-row"><span>සංඥාව</span><b>gradient</b></div>
+            <div class="detail-row"><span>උදාහරණය</span><b>MLP</b></div>
+          </div>
+        </div>
+        <div class="panel reveal">
+          <span class="panel-label">Evolutionary</span>
+          <h3 class="mt-2 si-text">පරම්පරා හරහා තේරී පවතිනවා</h3>
+          <p class="muted mt-2" style="font-size: 14px;">හොඳම ගමන් කරන්නෝ තමන්ගේ “ජාන” දරුවන්ට දෙනවා. සමහර ජාන වෙනස් වෙනවා. පරම්පරා ගණනකින් පස්සේ හැකියාව උපදිනවා.</p>
+          <div class="detail-list mt-3">
+            <div class="detail-row"><span>දත්ත</span><b>අවශ්‍ය නැහැ</b></div>
+            <div class="detail-row"><span>සංඥාව</span><b>fitness</b></div>
+            <div class="detail-row"><span>උදාහරණය</span><b>GA + NN</b></div>
+          </div>
+        </div>
+        <div class="panel reveal">
+          <span class="panel-label">Deep learning</span>
+          <h3 class="mt-2 si-text">පික්සෙල් රටා තේරුම් ගන්නවා</h3>
+          <p class="muted mt-2" style="font-size: 14px;">CNN එකක් රූපය කොටස් වශයෙන් බලනවා — කොන්, වක්‍ර, රේඛා. අංක ලැබ් එකේ MLP එකට අමතරව CNN එකක් තෝරන්නත් පුළුවන්.</p>
+          <div class="detail-list mt-3">
+            <div class="detail-row"><span>ස්ථර</span><b>conv → pool → conv</b></div>
+            <div class="detail-row"><span>parameters</span><b>7,226</b></div>
+            <div class="detail-row"><span>backprop</span><b>අතින් ලියා ඇත</b></div>
+          </div>
+        </div>
+        <div class="panel reveal">
+          <span class="panel-label">Statistical</span>
+          <h3 class="mt-2 si-text">රටා ගණන් කරනවා</h3>
+          <p class="muted mt-2" style="font-size: 14px;">අකුරු තුනකට පසුව මොකද එන්නේ? පෙළ දහස් ගණනක් කියවලා ඒ රටා ගණන් කරනවා. සරල, වේගවත්, පැහැදිලි.</p>
+          <div class="detail-list mt-3">
+            <div class="detail-row"><span>දත්ත</span><b>පෙළ පමණයි</b></div>
+            <div class="detail-row"><span>සංඥාව</span><b>සංඛ්‍යාත</b></div>
+            <div class="detail-row"><span>උදාහරණය</span><b>n-gram</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="panel reveal" style="padding: clamp(28px, 5vw, 56px); background: radial-gradient(700px 280px at 90% 10%, rgba(185,255,92,0.12), transparent 65%), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));">
+        <span class="kicker">No clouds were harmed</span>
+        <h2 class="mt-2">ඔබේ බ්‍රව්සරයට<br /><span class="grad">මොළයක් දෙන්න.</span></h2>
+        <p class="lead mt-3 si-text">හැම ගණනය කිරීමක්ම ඔබේ උපාංගයේ. ඉන්ටර්නෙට් නැතුවත් වැඩ කරනවා. දත්ත කොහේවත් යන්නේ නැහැ.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="labs/drone.html">පියාඹන මොළය දෙසට</a>
+          <a class="btn" href="labs/digits.html">අංකයක් අඳින්න</a>
+          <a class="btn" href="labs/snake.html">සර්පයෙක් පුහුණු කරන්න</a>
+          <a class="btn btn-ghost" href="labs/text.html">අකුරු අනාවැකි</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="row">
+      <span class="brand-mark" style="width:24px;height:24px;border-radius:7px;font-size:12px;">N</span>
+      <span>NeuraLab · <span class="si-text">බ්‍රව්සරය තුළම හදපු AI පරීක්ෂණ</span></span>
+    </div>
+    <div class="foot-links">
+      <a href="about.html">වැඩ කරන විදිය</a>
+      <a href="labs/drone.html">Labs</a>
+      <a href="https://github.com/Rusindu12/1018" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="assets/js/home.js"></script>
+</body>
+</html>
