@@ -2,6 +2,7 @@ name: Android APK
 
 # Builds the CryptoAI PRO Android APK.
 #   • every push to main          → artefact + the rolling "apk-latest" Release
+#   • a pull request              → artefact only (download it from the PR's checks)
 #   • a tag like v5.1.0           → artefact + a Release named after the tag
 #   • the Actions tab (manual)    → artefact + the rolling Release
 # The APK ends up in two places:
@@ -12,6 +13,10 @@ on:
   push:
     branches: [main]
     tags: ['v*']
+  # so a pull request already produces a downloadable APK artefact
+  # before anything is merged (the Release step stays off for PRs)
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       build_type:
