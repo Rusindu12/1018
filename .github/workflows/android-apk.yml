@@ -1,0 +1,189 @@
+name: Android APK
+
+# Builds the CryptoAI PRO Android APK.
+#   • every push to main          → artefact + the rolling "apk-latest" Release
+#   • a tag like v5.1.0           → artefact + a Release named after the tag
+#   • the Actions tab (manual)    → artefact + the rolling Release
+# The APK ends up in two places:
+#   Actions → run → Artifacts → apk  (needs to be logged in)
+#   Releases → CryptoAI PRO APK      (public download link, no login)
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'What to build'
+        required: false
+        default: 'both'
+        type: choice
+        options: [both, debug, release]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Cache npm + Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-apk-${{ hashFiles('mobile/package-lock.json', 'mobile/android/gradle/wrapper/gradle-wrapper.properties', 'mobile/android/**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-apk-
+            ${{ runner.os }}-
+
+      # The runner image already ships the Android SDK; this only fills gaps
+      # and never fails the build if a package is already installed.
+      - name: Make sure the Android SDK has what we need
+        run: |
+          set -x
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          SDKM="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          [ -x "$SDKM" ] || SDKM="$SDK/tools/bin/sdkmanager"
+          if [ -x "$SDKM" ]; then
+            yes | "$SDKM" --licenses >/dev/null 2>&1 || true
+            "$SDKM" "platform-tools" "platforms;android-34" "build-tools;34.0.0" >/dev/null 2>&1 || true
+          fi
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          ls "$SDK/platforms" || true
+
+      - name: Install web dependencies
+        working-directory: mobile
+        run: npm ci --no-audit --no-fund
+
+      - name: Build the single-file app
+        working-directory: mobile
+        run: |
+          npm run build
+          test -s www/index.html
+          ! grep -q '<script src=' www/index.html || (echo 'www/index.html still has external scripts' && exit 1)
+
+      # 20 engine tests (indicators, patterns, brain, backtester, i18n, build)
+      - name: Test the engine
+        run: node --test tests/*.test.mjs
+
+      # 8 jsdom tests that boot the real single-file build and drive the UI
+      - name: Smoke-test the app in jsdom
+        working-directory: mobile
+        run: npm test
+
+      - name: Sync the Android project
+        working-directory: mobile
+        run: npx cap sync android
+
+      - name: Read the app version
+        id: ver
+        run: |
+          V=$(node -p "require('./mobile/package.json').version")
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "Building CryptoAI PRO $V"
+
+      - name: Gradle build
+        working-directory: mobile/android
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          TYPE="${{ github.event.inputs.build_type || 'both' }}"
+          case "$TYPE" in
+            debug)   ./gradlew --no-daemon --stacktrace assembleDebug ;;
+            release) ./gradlew --no-daemon --stacktrace assembleRelease ;;
+            *)       ./gradlew --no-daemon --stacktrace assembleDebug assembleRelease ;;
+          esac
+
+      - name: Collect the APKs
+        id: collect
+        run: |
+          mkdir -p dist
+          find mobile/android/app/build/outputs/apk -name '*.apk' -exec cp -v {} dist/ \;
+          ls -lh dist
+          echo "names<<EOF" >> "$GITHUB_OUTPUT"
+          ls -1 dist | sed 's/^/  • /' >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "size=$(du -h dist/*.apk | head -1 | cut -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload build artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CryptoAI-PRO-${{ steps.ver.outputs.version }}-apk
+          path: dist/*.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish to GitHub Releases
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+            TITLE="CryptoAI PRO ${TAG}"
+          else
+            TAG="apk-latest"
+            TITLE="CryptoAI PRO APK (latest build)"
+          fi
+          NOTES=$(cat <<EOF
+          **CryptoAI PRO v${{ steps.ver.outputs.version }}** — built from \`${GITHUB_SHA::7}\` on $(date -u +'%Y-%m-%d %H:%M UTC').
+
+          ${{ steps.collect.outputs.names }}
+
+          ### Install
+          1. Download the APK below on your phone.
+          2. Open it and allow "install unknown apps" for your browser/files app.
+          3. The **debug** APK installs anywhere. The **release** APK is signed with your
+             upload keystore when the \`ANDROID_KEYSTORE_BASE64\` secrets are set, otherwise
+             with the CI debug key (still installable, but not Play-Store ready).
+
+          Market data is public; nothing is collected. Paper trading is fake money.
+          EOF
+          )
+          gh release create "$TAG" dist/*.apk \
+            --title "$TITLE" \
+            --notes "$NOTES" \
+            --target "$GITHUB_SHA" \
+            || gh release upload "$TAG" dist/*.apk --clobber
+          echo "APK published: https://github.com/${GITHUB_REPOSITORY}/releases/tag/$TAG"
+
+      - name: Summary
+        run: |
+          {
+            echo "## 📱 CryptoAI PRO v${{ steps.ver.outputs.version }}"
+            echo ""
+            echo "APKs built:"
+            echo "${{ steps.collect.outputs.names }}"
+            echo ""
+            echo "Download them from **Actions → this run → Artifacts**, or from the"
+            echo "[Releases page](https://github.com/${GITHUB_REPOSITORY}/releases)."
+          } >> "$GITHUB_STEP_SUMMARY"

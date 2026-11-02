@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CryptoAI PRO</string>
+    <string name="title_activity_main">CryptoAI PRO</string>
+    <string name="package_name">com.rusindu.cryptoaipro</string>
+    <string name="custom_url_scheme">com.rusindu.cryptoaipro</string>
+</resources>
