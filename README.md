@@ -45,6 +45,25 @@ two one-click upgrades that move it onto a native GitHub Pages / Vercel deployme
   or run `vercel --prod` locally.
 - **Netlify / Cloudflare / S3 / nginx** — publish the repository root as-is.
 
+## 📱 CryptoAI PRO — the Android APK in this repository
+
+`mobile/` holds a second, unrelated project: **CryptoAI PRO**, a crypto analysis / paper-trading /
+AI-bot app that ships as **one self-contained HTML file** (`cryptoai.html` at the repository root,
+317 KB, no external scripts or stylesheets) plus a Capacitor Android shell that turns it into an
+installable **APK**.
+
+- **Get the APK** — the `Android APK` GitHub Actions workflow builds `mobile/android` on every push
+  to `main` (and on any `v*` tag) and publishes the APK to the
+  [Releases page](../../releases) as *CryptoAI PRO APK (latest build)*, plus a run artefact.
+  No Android SDK needed on your machine.
+- **Build it yourself** — `cd mobile && npm ci && npm run build && npx cap sync android && npm run apk:debug`.
+- **Try it in a browser right now** — open [`cryptoai.html`](cryptoai.html) (or `npm start` and visit
+  `/cryptoai.html`): markets, chart, signals, paper trading and the bot all work there; only *live*
+  exchange orders need the Android app.
+
+Everything about it — layout, permissions, release signing, troubleshooting — is in
+**[mobile/README.md](mobile/README.md)**.
+
 ## Run it
 
 ```bash
@@ -160,6 +179,13 @@ emits a broken vowel sign.
 │       ├── ui.js           canvas fitting, charts, toasts, nav
 │       ├── home.js         hero animation
 │       └── about.js        scroll spy
+├── cryptoai.html           CryptoAI PRO — generated single-file app (see mobile/)
+├── mobile/                 CryptoAI PRO Android project → mobile/README.md
+│   ├── src/shell.html      markup + CSS shell
+│   ├── src/js/             i18n · ta · patterns · brain · app · sysmgmt
+│   ├── tools/build.mjs     inlines the six scripts into ONE html file
+│   ├── www/index.html      build output shipped inside the APK
+│   └── android/            Capacitor/Gradle project that produces the APK
 ├── tests/                  node:test suites + HTTP smoke test
 └── server.js               zero-dependency static server
 ```

@@ -1,3 +1,17 @@
 node_modules/
 .DS_Store
 *.log
+
+# --- CryptoAI PRO Android build (mobile/) -------------------------------
+# signing material must never be committed
+mobile/android/keystore.properties
+*.keystore
+*.jks
+
+# Gradle / Android build output
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/
+
+# the generated single-file app IS committed on purpose:
+# GitHub Pages serves cryptoai.html and the APK build ships mobile/www/index.html

@@ -1,0 +1,40 @@
+{
+  "appId": "com.rusindu.cryptoaipro",
+  "appName": "CryptoAI PRO",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false,
+    "backgroundColor": "#0a0e17"
+  },
+  "server": {
+    "androidScheme": "https",
+    "cleartext": false
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0a0e17",
+      "overlaysWebView": false
+    },
+    "SplashScreen": {
+      "launchShowDuration": 900,
+      "launchAutoHide": true,
+      "backgroundColor": "#0a0e17",
+      "showSpinner": true,
+      "spinnerColor": "#f0b90b",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "splashFullScreen": true,
+      "splashImmersive": true
+    },
+    "Keyboard": {
+      "resize": "body",
+      "resizeOnFullScreen": true
+    }
+  }
+}

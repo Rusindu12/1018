@@ -65,6 +65,21 @@ vercel --prod          # run from the repository root
 
 Both options serve the same files, so links, themes and every lab behave identically.
 
+## Android APK (CryptoAI PRO)
+
+A second artefact lives in `mobile/`: the **CryptoAI PRO** app, built as one self-contained HTML file
+and wrapped in a Capacitor Android project.
+
+| Target | Status | Where the file lands |
+|--------|--------|----------------------|
+| Browser | `cryptoai.html` is already served by Pages / Vercel / jsDelivr | `https://<host>/cryptoai.html` |
+| Android APK | `.github/workflows/android-apk.yml` builds on every push to `main` and on `v*` tags | **Releases → “CryptoAI PRO APK (latest build)”**, or the run's artefact |
+| Local build | `cd mobile && npm ci && npm run build && npx cap sync android && npm run apk:debug` | `mobile/android/app/build/outputs/apk/debug/` |
+
+The workflow needs no secrets for a debug APK. Set `ANDROID_KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`,
+`KEY_ALIAS` and `KEY_PASSWORD` as repository secrets to get a signed release APK instead.
+Full instructions, permissions and troubleshooting: **[mobile/README.md](mobile/README.md)**.
+
 ## Notes
 
 - Google Fonts is the only external request at runtime. The site falls back to system fonts offline.
