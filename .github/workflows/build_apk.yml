@@ -48,9 +48,11 @@ jobs:
           cat /tmp/flutter-analyze.log
           if [[ $result -ne 0 ]]; then
             while IFS= read -r line; do
-              if [[ "$line" =~ ^(error|warning|info)[[:space:]]+-[[:space:]] ]]; then
-                echo "::error title=Flutter analysis issue::$line"
-              fi
+              [[ -z "$line" ]] && continue
+              message=${line//'%'/'%25'}
+              message=${message//$'\r'/'%0D'}
+              message=${message//$'\n'/'%0A'}
+              echo "::error title=Flutter analysis output::$message"
             done < /tmp/flutter-analyze.log
           fi
           exit "$result"
