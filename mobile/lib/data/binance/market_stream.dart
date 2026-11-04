@@ -41,7 +41,7 @@ class MarketStream {
 
   void _open() {
     if (_disposed || _symbols.isEmpty) return;
-    final streamNames = _symbols.map((symbol) => '${symbol}@ticker').join('/');
+    final streamNames = _symbols.map((symbol) => '$symbol@ticker').join('/');
     final base = _webSocketBase(_marketType, _testnet);
     final uri = Uri.parse('$base/stream?streams=$streamNames');
     try {

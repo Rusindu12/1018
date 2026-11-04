@@ -203,7 +203,7 @@ class TradingController extends ChangeNotifier {
       );
     }
     if (snapshot.dailyPnlUsdt != null && snapshot.dailyPnlUsdt! <= -settings.dailyLossLimitUsdt) {
-      throw BinanceApiException(
+      throw const BinanceApiException(
         'The configured daily loss limit has been reached. Orders are paused until the next UTC day or until you review your risk settings.',
       );
     }

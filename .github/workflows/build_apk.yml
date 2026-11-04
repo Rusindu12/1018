@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings > /tmp/flutter-analyze.log 2>&1
+          flutter analyze --no-pub > /tmp/flutter-analyze.log 2>&1
           result=$?
           cat /tmp/flutter-analyze.log
           if [[ $result -ne 0 ]]; then
