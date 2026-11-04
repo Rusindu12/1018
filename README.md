@@ -187,3 +187,17 @@ disappear on refresh.
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE).
+
+## Market Lens (Binance market analysis)
+
+Open `/trading/` for a mobile-friendly market dashboard using Binance's public Spot API. It shows BTC, ETH, SOL and BNB tickers, closing-price charts, a transparent RSI / moving-average / momentum heuristic, and a local-only simulated portfolio. It does not use API keys, connect an account, or submit real orders. The heuristic is not a trained AI model or financial advice. Binance access depends on your region, network, and Binance's availability; the dashboard reports failures rather than inventing prices. Paper trades use the latest candle close without fees or slippage and are saved in browser local storage. Clearing browser data resets them.
+
+The web manifest enables installation on supported mobile browsers. See the Android APK section below for the separate debug build. Do not put Binance secret keys into the browser or this repository.
+
+### Experimental trained model
+
+The **Train model** button trains a small logistic regression locally using the selected pair's candle closes. Features are recent returns and deviation from the 10-candle average. The oldest 80% of available examples are used for training, with normalization calculated only on that training set; the latest 20% are held out for a directional accuracy check. The output is a model score, not a calibrated probability or reliable prediction. A roughly 100-candle sample and one holdout are far too small to establish a trading edge; no automatic or real trades are made. This model is implemented in this repository and does not use an external pretrained model.
+
+### Android APK
+
+`android/` contains an Android WebView wrapper that bundles the dashboard. With Android SDK 35, Java 17 and Gradle 8.9 installed, run `cd android && gradle assembleDebug`. The debug APK is written to `android/app/build/outputs/apk/debug/app-debug.apk`. Alternatively, run the **Build Android APK** GitHub Actions workflow on a branch containing these files and download its `market-lens-debug-apk` artifact. A debug APK is for testing, not a signed production release. The APK requires internet access for Binance data; access is subject to Binance regional restrictions. No account keys or real trading are supported.

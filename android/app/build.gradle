@@ -1,0 +1,22 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.neuralab.marketlens'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.neuralab.marketlens'
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName '1.0'
+    }
+    sourceSets.main.assets.srcDir layout.buildDirectory.dir('generated/marketAssets')
+}
+
+dependencies { implementation 'androidx.webkit:webkit:1.12.1' }
+
+tasks.register('copyMarketAssets', Copy) {
+    from('../../trading')
+    into(layout.buildDirectory.dir('generated/marketAssets/trading'))
+}
+tasks.named('preBuild').configure { dependsOn 'copyMarketAssets' }
