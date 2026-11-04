@@ -1,3 +1,13 @@
 node_modules/
 .DS_Store
 *.log
+
+# Flutter / Android outputs and local signing material
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/android/local.properties
+mobile/android/key.properties
+mobile/android/app/*.jks
+mobile/android/app/*.keystore

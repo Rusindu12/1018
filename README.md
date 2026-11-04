@@ -45,6 +45,10 @@ two one-click upgrades that move it onto a native GitHub Pages / Vercel deployme
   or run `vercel --prod` locally.
 - **Netlify / Cloudflare / S3 / nginx** — publish the repository root as-is.
 
+## Android Binance trading app
+
+A separate Flutter Android app for Binance market analysis, local indicator signals and manually confirmed Spot / USDⓈ-M Futures orders is in [`mobile/`](mobile/). See [`mobile/README.md`](mobile/README.md) for architecture, security boundaries, build steps and the GitHub Actions APK workflow. The app is testnet-first; it does not run unattended auto-trading.
+
 ## Run it
 
 ```bash
