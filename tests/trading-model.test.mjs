@@ -7,6 +7,7 @@ test('model trains with chronological holdout and returns finite scores',()=>{
   assert.equal(result.trainCount,71); assert.equal(result.testCount,18);
   assert.ok(result.probability>=0&&result.probability<=1);
   assert.ok(result.accuracy>=0&&result.accuracy<=1);
+  assert.ok(result.baseline>=0&&result.baseline<=1);
   assert.deepEqual(result,trainModel(data));
 });
 test('model rejects invalid inputs',()=>{assert.throws(()=>trainModel([1,2]));assert.throws(()=>trainModel(Array(70).fill(NaN)))});

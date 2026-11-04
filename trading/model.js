@@ -21,5 +21,7 @@ export function trainModel(closes) {
     weights.forEach((w,j)=>{weights[j]-=0.08*(gradient[j]/training.length+(j ? 0.01*w : 0));});
   }
   const correct=test.filter(e => (predict(e.x)>=0.5) === Boolean(e.y)).length;
-  return { probability: predict(features(closes,closes.length-1)), accuracy: correct/test.length, trainCount: training.length, testCount: test.length };
+  const majorityUp = training.filter(e => e.y === 1).length >= training.length / 2;
+  const baseline = test.filter(e => Boolean(e.y) === majorityUp).length / test.length;
+  return { probability: predict(features(closes,closes.length-1)), accuracy: correct/test.length, baseline, majorityUp, trainCount: training.length, testCount: test.length };
 }

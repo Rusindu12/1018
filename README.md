@@ -201,3 +201,7 @@ The **Train model** button trains a small logistic regression locally using the 
 ### Android APK
 
 `android/` contains an Android WebView wrapper that bundles the dashboard. With Android SDK 35, Java 17 and Gradle 8.9 installed, run `cd android && gradle assembleDebug`. The debug APK is written to `android/app/build/outputs/apk/debug/app-debug.apk`. Alternatively, run the **Build Android APK** GitHub Actions workflow on a branch containing these files and download its `market-lens-debug-apk` artifact. A debug APK is for testing, not a signed production release. The APK requires internet access for Binance data; access is subject to Binance regional restrictions. No account keys or real trading are supported.
+
+### Risk and data freshness
+
+The long-only position-size calculator estimates size from account cash, entry, stop, and percentage risk, capped at unleveraged account cash. Fees, gaps, slippage, and failed stop execution can produce greater losses; it does not place an order. Data refreshes every minute while the page is visible; paper trades are blocked if the last successful candle fetch is older than two minutes. The latest candle can still be in progress and paper execution uses its displayed close, not a real quote. AI training excludes the open candle and reports a training-majority baseline alongside chronological holdout accuracy. These checks do not establish predictive performance.
