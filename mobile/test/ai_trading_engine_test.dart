@@ -24,7 +24,7 @@ void main() {
 
 List<Candle> _candles(int count) {
   return List<Candle>.generate(count, (index) {
-    final close = 100 + index * 0.8;
+    final close = 100 + index * 0.4 + index * index * 0.005;
     return Candle(
       openTime: DateTime.utc(2025, 1, 1).add(Duration(hours: index)),
       open: close - 0.3,
