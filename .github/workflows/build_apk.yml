@@ -101,7 +101,21 @@ jobs:
 
       - name: Build release APK
         working-directory: mobile
-        run: flutter build apk --release
+        shell: bash
+        run: |
+          set +e
+          flutter build apk --release > /tmp/flutter-build.log 2>&1
+          result=$?
+          cat /tmp/flutter-build.log
+          if [[ $result -ne 0 ]]; then
+            python3 - <<'PYLOG'
+          from pathlib import Path
+          log = Path('/tmp/flutter-build.log').read_text(errors='replace')
+          message = log[-7000:].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+          print(f'::error title=Flutter APK build failure::{message}')
+          PYLOG
+          fi
+          exit "$result"
 
       - name: Name artifact release.apk
         working-directory: mobile
