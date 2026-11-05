@@ -209,3 +209,7 @@ The long-only position-size calculator estimates size from account cash, entry, 
 ### Automated spot trading prototype
 
 See [bot/README.md](bot/README.md) for an experimental, self-hosted BTC/USDT AI bot with dry-run and **Binance Spot Testnet only** modes. It cannot place real-money orders and is not controlled by the Android dashboard. Its candle-based exits are not exchange stop orders; it requires monitoring and extensive validation. It is not a production-ready automated trading platform.
+
+### Historical backtesting
+
+The dashboard can run the Testnet bot's experimental strategy on the selected pair and interval, using up to 250 closed candles. Each step trains on a rolling 100-candle window and evaluates a signal using only data available at that close; a simulated order executes at the next candle's open. The simulation assumes full investment of virtual cash, 0.1% fees and 0.05% slippage per side. It reports return, close-to-close maximum drawdown, simulated order count, position status and a fee-free buy-and-hold reference. The fixed-size Testnet bot has different sizing. Stops are candle-close signals, not exchange-native stop orders; intrabar losses, spread, liquidity, tax and outages are not modeled. These results are illustrative, not proof of profitability, and do not validate live trading.

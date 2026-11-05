@@ -1,6 +1,7 @@
 import { indicators } from './indicators.js';
 import { trainModel } from './model.js';
 import { calculateRisk } from './risk.js';
+import { backtest } from './backtest.js';
 const $ = id => document.getElementById(id);
 const symbols = ['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT'];
 const names = {BTCUSDT:'Bitcoin',ETHUSDT:'Ethereum',SOLUSDT:'Solana',BNBUSDT:'BNB'};
@@ -30,3 +31,24 @@ if(location.hostname==='appassets.androidplatform.net'){document.querySelectorAl
 $('riskForm').addEventListener('submit',e=>{e.preventDefault();try{const r=calculateRisk(Number($('riskBalance').value),Number($('riskPercent').value),Number($('riskEntry').value),Number($('riskStop').value));$('riskResult').textContent=`Maximum size: ${r.quantity.toFixed(6)} ${asset($('symbol').value)} · Position value: ${fmt(r.cost)} USDT · Estimated loss at stop: ${fmt(r.estimatedLoss)} USDT${r.capped?' · Capped by account cash':''}.`}catch(error){$('riskResult').textContent=error.message}});
 // Refresh while visible; failed requests clear prices instead of silently using stale data.
 setInterval(()=>{if(!document.hidden) refresh()},60000);
+
+let backtestRequest = 0;
+$('runBacktest').addEventListener('click', async ()=>{
+  const symbol=$('symbol').value, interval=$('interval').value, id=++backtestRequest;
+  $('runBacktest').disabled=true; $('backtestStats').hidden=true; $('backtestStatus').textContent='Downloading closed candles and running simulation…';
+  try {
+    const rows=await get(`/klines?symbol=${symbol}&interval=${interval}&limit=250`);
+    const bars=rows.filter(x=>Number(x[6])<Date.now()).map(x=>({time:Number(x[0]),open:Number(x[1]),close:Number(x[4])}));
+    // Let the browser paint the loading state before CPU-bound model training.
+    await new Promise(resolve=>setTimeout(resolve,30));
+    const result=backtest(bars);
+    if(id!==backtestRequest || symbol!==$('symbol').value || interval!==$('interval').value) { $('backtestStatus').textContent='Pair or interval changed. Run the backtest again.'; return; }
+    $('btValue').textContent=fmt(result.finalValue)+' USDT';
+    $('btReturn').textContent=(result.returnPct>=0?'+':'')+result.returnPct.toFixed(2)+'%';
+    $('btDrawdown').textContent=result.maxDrawdownPct.toFixed(2)+'%';
+    $('btHold').textContent=(result.buyHoldPct>=0?'+':'')+result.buyHoldPct.toFixed(2)+'%';
+    $('backtestStats').hidden=false;
+    $('backtestStatus').textContent=`${symbol} · ${interval} · ${result.candles} closed candles · ${result.trades} simulated orders · ${result.openPosition?'position open (marked to close)':'no open position'}`;
+  } catch(e) { $('backtestStatus').textContent='Backtest unavailable: unable to load enough valid Binance candles.'; }
+  finally { $('runBacktest').disabled=false; }
+});
