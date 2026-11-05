@@ -97,7 +97,7 @@ class _CandlePainter extends CustomPainter {
 
     final volumeMax = candles.map((candle) => candle.volume).fold<double>(0, (a, b) => a > b ? a : b);
     final volumeBase = size.height - 8;
-    final volumeHeight = 20.0;
+    const volumeHeight = 20.0;
     final gap = plot.width / candles.length;
     final bodyWidth = (gap * 0.58).clamp(1.4, 11.0).toDouble();
     final selected = selectedIndex.clamp(0, candles.length - 1).toInt();

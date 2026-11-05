@@ -50,7 +50,7 @@ Unattended/background live automation is intentionally not included. Signals can
 
 ## Run locally
 
-Install Flutter stable (3.27 or newer), Android Studio/Android SDK, and JDK 17. Then:
+Install Flutter stable (3.33 or newer), Android Studio/Android SDK, and JDK 17. Then:
 
 ```bash
 cd mobile

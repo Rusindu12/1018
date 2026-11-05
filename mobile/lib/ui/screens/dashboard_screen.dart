@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../models/app_settings.dart';
 import '../../models/market_models.dart';
 import '../../state/trading_controller.dart';
 import '../app_theme.dart';

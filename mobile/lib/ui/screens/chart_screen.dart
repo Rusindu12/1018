@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../models/market_models.dart';
 import '../../state/trading_controller.dart';
 import '../app_theme.dart';
 import '../formatters.dart';
@@ -40,7 +39,7 @@ class _ChartScreenState extends State<ChartScreen> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: controller.settings.symbol,
+                      initialValue: controller.settings.symbol,
                       decoration: const InputDecoration(labelText: 'Market', contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
                       items: controller.watchlist.map((symbol) => DropdownMenuItem(value: symbol, child: Text(symbol))).toList(),
                       onChanged: (symbol) {
