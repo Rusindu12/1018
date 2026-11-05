@@ -59,7 +59,22 @@ jobs:
 
       - name: Run tests
         working-directory: mobile
-        run: flutter test
+        shell: bash
+        run: |
+          set +e
+          flutter test --no-pub --reporter expanded > /tmp/flutter-tests.log 2>&1
+          result=$?
+          cat /tmp/flutter-tests.log
+          if [[ $result -ne 0 ]]; then
+            while IFS= read -r line; do
+              [[ -z "$line" ]] && continue
+              message=${line//'%'/'%25'}
+              message=${message//$'\r'/'%0D'}
+              message=${message//$'\n'/'%0A'}
+              echo "::error title=Flutter test output::$message"
+            done < /tmp/flutter-tests.log
+          fi
+          exit "$result"
 
       # Optional Play Store/upload signing. Without these secrets the APK is
       # debug-signed so it can be installed for evaluation, not store publishing.
