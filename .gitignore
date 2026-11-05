@@ -6,3 +6,9 @@ node_modules/
 android/.gradle/
 android/local.properties
 android/**/build/
+
+# Local trading bot state and credentials
+.bot-state/
+.env
+.env.*
+!.env.example

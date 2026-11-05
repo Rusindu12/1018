@@ -205,3 +205,7 @@ The **Train model** button trains a small logistic regression locally using the 
 ### Risk and data freshness
 
 The long-only position-size calculator estimates size from account cash, entry, stop, and percentage risk, capped at unleveraged account cash. Fees, gaps, slippage, and failed stop execution can produce greater losses; it does not place an order. Data refreshes every minute while the page is visible; paper trades are blocked if the last successful candle fetch is older than two minutes. The latest candle can still be in progress and paper execution uses its displayed close, not a real quote. AI training excludes the open candle and reports a training-majority baseline alongside chronological holdout accuracy. These checks do not establish predictive performance.
+
+### Automated spot trading prototype
+
+See [bot/README.md](bot/README.md) for an experimental, self-hosted BTC/USDT AI bot with dry-run and **Binance Spot Testnet only** modes. It cannot place real-money orders and is not controlled by the Android dashboard. Its candle-based exits are not exchange stop orders; it requires monitoring and extensive validation. It is not a production-ready automated trading platform.
