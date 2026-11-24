@@ -6,7 +6,11 @@ on:
     branches: ['**']
     paths:
       - 'crypto/**'
+      - 'backend/**'
+      - 'tests/**'
       - 'android/**'
+      - 'Dockerfile'
+      - '.env.example'
       - 'capacitor.config.json'
       - 'vite.config.js'
       - 'package.json'
@@ -15,7 +19,11 @@ on:
   pull_request:
     paths:
       - 'crypto/**'
+      - 'backend/**'
+      - 'tests/**'
       - 'android/**'
+      - 'Dockerfile'
+      - '.env.example'
       - 'capacitor.config.json'
       - 'vite.config.js'
       - 'package.json'
@@ -48,6 +56,8 @@ jobs:
           cache: npm
       - name: Install web dependencies
         run: npm ci
+      - name: Run tests
+        run: npm test
       - name: Build web app and sync Capacitor assets
         run: npm run android:sync
       - name: Assemble debug APK

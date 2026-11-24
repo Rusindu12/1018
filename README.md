@@ -2,9 +2,11 @@
 
 ## CryptoLab — safe paper-trading practice
 
-This repository also includes a bilingual crypto-market practice app at [`crypto/`](crypto/). It reads public spot-market prices when available, explains a small transparent EMA/RSI rule, and offers a local paper account with simulated fees, risk sizing, a historical illustration, and a paper-only strategy runner. It is **not** a real trading bot and does not connect to an exchange account, store API keys, send orders, or promise profits. Sample data is marked when public market data cannot be reached.
+This repository also includes a crypto-market practice app at [`crypto/`](crypto/). It reads public spot-market prices when available, explains a transparent EMA/RSI rule, and includes a local paper account with simulated fees, risk sizing, a historical illustration, and a paper-only strategy runner. An optional private backend supports user-confirmed Binance **spot market orders**; Testnet is the default, while live orders require two explicit server settings. Binance secrets stay on that backend—not in the APK. No leverage, withdrawals, unattended live bot, or profit promise. Sample data is marked when public market data cannot be reached.
 
 **Build the Android APK from GitHub:** every push to a branch with app changes runs **Build Android APK**. Open that run under **Actions** and download the `cryptolab-paper-debug-apk` artifact. You can also use **Run workflow** on a branch.  A debug APK is for sideloading/testing; it is not a Play Store-signed release. The workflow is defined in [`.github/workflows/android-apk.yml`](.github/workflows/android-apk.yml).
+
+**Private Binance backend:** see [`backend/README.md`](backend/README.md). Configure `.env` on a private host, start with Binance Spot Testnet, and protect the backend behind HTTPS plus a VPN/private access layer. The APK asks only for the backend URL and a random backend access token; the token is memory-only and cleared when the app closes. Never put `BINANCE_API_SECRET` in the Android app or GitHub.
 
 For local development: `npm ci && npm run dev` opens the app at `/`; run `npm run android:sync` before an Android Studio/Gradle build. `npm run build` produces the web app in `dist/`.
 
@@ -70,7 +72,7 @@ static pages with `python3 -m http.server`; use an HTTP server because `file://`
 npm test
 ```
 
-46 tests cover the neural-network numerical core, both evolutions, the language model, the digit dataset, paper-trading indicators/backtesting, a numerical
+55 tests cover the neural-network numerical core, both evolutions, the language model, the digit dataset, paper-trading indicators/backtesting, secure backend validation, and a numerical
 gradient check of the CNN's hand-written convolution backprop, a static link audit, a syntax check of
 every module, and a real HTTP smoke test of the server.
 

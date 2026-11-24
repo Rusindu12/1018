@@ -37,6 +37,7 @@ test('every javascript module parses', async () => {
   }
   await walk(join(ROOT, 'assets'));
   await walk(join(ROOT, 'crypto'));
+  await walk(join(ROOT, 'backend'));
   await walk(join(ROOT, 'tests'));
   for (const file of files) {
     execFileSync(process.execPath, ['--check', file], { stdio: 'pipe' });

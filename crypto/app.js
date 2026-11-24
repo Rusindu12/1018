@@ -15,6 +15,7 @@ let runnerTimer = null;
 let deferredInstall = null;
 let lastBotAction = 0;
 let runnerStartEquity = STARTING_CASH;
+let liveSession = { url: localStorage.getItem('cryptolab-backend-url') || '', token: '', status: null, balances: null };
 let toastTimer;
 
 function freshAccount() { return { cash: STARTING_CASH, positions: [], history: [], realized: 0, fees: 0, startingEquity: STARTING_CASH }; }
@@ -233,6 +234,110 @@ function startRunner() {
 }
 function stopRunner() { if (runnerTimer) clearInterval(runnerTimer); runnerTimer = null; $('startBot').disabled = false; $('stopBot').disabled = true; $('botStatus').textContent = t('stopped'); }
 
+function updateLiveLabels() {
+  const symbol = $('liveSymbol').value;
+  const asset = symbol.replace(/USDT$/, '');
+  const isBuy = $('liveSide').value === 'BUY';
+  $('liveAmountLabel').textContent = isBuy ? 'USDT to spend' : `${asset} amount to sell`;
+  $('liveAmount').min = isBuy ? String(liveSession.status?.minOrderUsdt || 10) : '0.000001';
+  $('liveAmount').max = isBuy && liveSession.status?.maxOrderUsdt ? String(liveSession.status.maxOrderUsdt) : '';
+  $('liveAmount').step = isBuy ? '0.01' : '0.000001';
+  $('liveOrderNote').textContent = liveSession.status
+    ? `${liveSession.status.mode} · server cap ${money(liveSession.status.maxOrderUsdt)} USDT per order · Binance market prices can move during execution.`
+    : 'Server-side order cap and Binance symbol rules are checked before sending.';
+  $('placeLiveOrder').disabled = !(liveSession.token && liveSession.status?.ordersEnabled && $('liveAck').checked);
+}
+function renderLiveStatus(message = '') {
+  const root = $('backendStatus');
+  if (message) root.textContent = message;
+  else if (!liveSession.token || !liveSession.status) root.textContent = 'Not connected. Testnet is the backend default; live trading must be explicitly enabled on your private server.';
+  else {
+    const s = liveSession.status;
+    root.textContent = `${s.mode} backend · ${s.credentialsConfigured ? 'Binance credentials configured' : 'Binance credentials missing'} · ${s.ordersEnabled ? 'manual orders enabled' : 'orders disabled'} · max ${money(s.maxOrderUsdt)} USDT/order. ${s.note}`;
+  }
+  $('backendDisconnect').disabled = !liveSession.token;
+  updateLiveLabels();
+}
+function backendBaseUrl(raw) {
+  let url;
+  try { url = new URL(raw.trim()); } catch { throw new Error('Enter a valid private backend URL.'); }
+  const local = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+  if (url.protocol !== 'https:' && !(url.protocol === 'http:' && local)) throw new Error('Use HTTPS for remote backends. HTTP is allowed only for localhost development.');
+  if (url.username || url.password || url.search || url.hash) throw new Error('Backend URL cannot contain credentials, a query string, or a fragment.');
+  return `${url.origin}${url.pathname.replace(/\/+$/, '')}`;
+}
+async function backendFetch(path, { url = liveSession.url, token = liveSession.token, method = 'GET', body } = {}) {
+  const response = await fetch(`${url}${path}`, {
+    method, cache: 'no-store', signal: AbortSignal.timeout(10_000),
+    headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || `Backend request failed (${response.status}).`);
+  return data;
+}
+async function connectBackend() {
+  const button = $('backendConnect'); button.disabled = true;
+  try {
+    const url = backendBaseUrl($('backendUrl').value);
+    const token = $('backendToken').value.trim();
+    if (token.length < 32) throw new Error('Backend access token must be at least 32 characters. Generate a random token on your server.');
+    const health = await fetch(`${url}/health`, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
+    if (!health.ok) throw new Error(`Backend health check failed (${health.status}).`);
+    const status = await backendFetch('/api/status', { url, token });
+    liveSession = { url, token, status, balances: null };
+    try { localStorage.setItem('cryptolab-backend-url', url); } catch { /* endpoint is optional convenience only */ }
+    $('backendUrl').value = url; $('backendToken').value = '';
+    renderLiveStatus();
+    if (status.ordersEnabled) await refreshLiveAccount();
+    toast(`Connected to ${status.mode}. Binance keys remain server-side.`);
+  } catch (error) {
+    liveSession.token = ''; liveSession.status = null; liveSession.balances = null;
+    renderLiveStatus(error.message || 'Could not connect to backend.');
+  } finally { button.disabled = false; }
+}
+async function refreshLiveAccount() {
+  if (!liveSession.token || !liveSession.status?.credentialsConfigured) return;
+  try {
+    const data = await backendFetch('/api/account'); liveSession.balances = data.balances; renderLiveBalances();
+  } catch (error) { $('liveBalances').textContent = `Account unavailable: ${error.message}`; }
+}
+function renderLiveBalances() {
+  const rows = liveSession.balances || [];
+  $('liveBalances').textContent = rows.length
+    ? `Available · ${rows.map(row => `${row.asset}: ${Number(row.free).toFixed(6)} free${Number(row.locked) ? `, ${Number(row.locked).toFixed(6)} locked` : ''}`).join(' · ')}`
+    : 'No non-zero BTC, ETH, SOL, BNB or USDT balances returned.';
+}
+function disconnectBackend() {
+  liveSession = { url: $('backendUrl').value.trim(), token: '', status: null, balances: null };
+  $('backendToken').value = ''; $('liveAck').checked = false; renderLiveStatus('Disconnected. The backend URL may be remembered; access token is not stored.');
+  $('liveBalances').textContent = 'Account balances are only shown after a successful authenticated connection.';
+}
+async function placeLiveOrder() {
+  if (!liveSession.status?.ordersEnabled || !liveSession.token) { toast('Connect an enabled Binance backend first.'); return; }
+  if (!$('liveAck').checked) { toast('Acknowledge the spot-order risk before continuing.'); return; }
+  const symbol = $('liveSymbol').value, side = $('liveSide').value, amount = Number($('liveAmount').value);
+  if (!Number.isFinite(amount) || amount <= 0) { toast('Enter a valid positive order amount.'); return; }
+  const priceData = await backendFetch(`/api/quote?symbol=${encodeURIComponent(symbol)}`).catch(error => { toast(error.message); return null; });
+  if (!priceData) return;
+  const isLive = priceData.mode === 'LIVE SPOT';
+  const amountText = side === 'BUY' ? `${money(amount)} USDT` : `${amount} ${symbol.replace(/USDT$/, '')}`;
+  const est = side === 'BUY' ? `about ${(amount / priceData.price).toFixed(8)} ${symbol.replace(/USDT$/, '')}` : `about ${money(amount * priceData.price)} USDT notional`;
+  const modeText = isLive ? 'REAL BINANCE SPOT' : 'BINANCE SPOT TESTNET';
+  const confirmed = confirm(`${modeText}\n\n${side} ${symbol}\nAmount: ${amountText}\nReference price: ${priceFmt(priceData.price)} USDT\nEstimated: ${est}\n\nMarket fills can differ from this quote. This sends an order now. Continue?`);
+  if (!confirmed) return;
+  if (isLive && !confirm(`FINAL LIVE-ORDER CHECK\n\nThis uses real funds on Binance Spot. There is no guaranteed price or profit. Place this ${side} market order?`)) return;
+  $('placeLiveOrder').disabled = true;
+  try {
+    const result = await backendFetch('/api/order', { method: 'POST', body: { symbol, side, amount, confirm: true } });
+    const order = result.order;
+    $('liveOrderNote').textContent = `${result.mode} · ${order.status} · order ${order.orderId} · filled ${order.executedQty} ${symbol.replace(/USDT$/, '')} · quote ${money(order.quoteQty)} USDT.`;
+    toast(`${result.mode} ${order.status}: ${side} ${symbol}`);
+    await refreshLiveAccount();
+  } catch (error) { $('liveOrderNote').textContent = error.message; toast(error.message); }
+  finally { updateLiveLabels(); }
+}
+
 // Pair selector buttons use a fixed, trusted symbol list.
 for (const item of SYMBOLS) { const button = document.createElement('button'); button.className = `pair ${item.symbol === selected.symbol ? 'active' : ''}`; button.dataset.symbol = item.symbol; button.textContent = item.label; button.addEventListener('click', () => selectSymbol(item)); $('pairButtons').append(button); }
 document.querySelectorAll('.nav button').forEach(button => button.addEventListener('click', () => switchView(button.dataset.view)));
@@ -245,15 +350,22 @@ $('sellPaper').addEventListener('click', () => { if (!closePosition(selected.sym
 $('riskPct').addEventListener('input', updateRiskSizing); $('stopPct').addEventListener('input', updateRiskSizing);
 $('backtestBtn').addEventListener('click', runBacktest);
 $('startBot').addEventListener('click', startRunner); $('stopBot').addEventListener('click', () => { stopRunner(); toast(t('stoppedToast')); });
+$('backendUrl').value = liveSession.url;
+$('backendConnect').addEventListener('click', connectBackend);
+$('backendDisconnect').addEventListener('click', disconnectBackend);
+$('placeLiveOrder').addEventListener('click', placeLiveOrder);
+$('liveAck').addEventListener('change', updateLiveLabels);
+$('liveSymbol').addEventListener('change', updateLiveLabels);
+$('liveSide').addEventListener('change', updateLiveLabels);
 $('resetPaper').addEventListener('click', () => { if (confirm(t('resetConfirm'))) { stopRunner(); account = freshAccount(); save(); renderAccount(); renderRisk(); toast('Paper account reset to 10,000 USDT.'); } });
 $('langBtn').addEventListener('click', () => { lang = lang === 'en' ? 'si' : 'en'; localStorage.setItem('cryptolab-lang', lang); applyLanguage(); });
 window.addEventListener('resize', () => requestAnimationFrame(drawChart));
-window.addEventListener('pagehide', stopRunner);
+window.addEventListener('pagehide', () => { stopRunner(); liveSession.token = ''; $('backendToken').value = ''; });
 window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstall = event; $('installBtn').style.display = 'inline-block'; });
 $('installBtn').addEventListener('click', async () => { if (!deferredInstall) return; deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; $('installBtn').style.display = 'none'; });
 const drawChart = renderChart;
 
-applyLanguage(); renderOrderButtons(); renderAccount(); renderRisk();
+applyLanguage(); renderOrderButtons(); renderAccount(); renderRisk(); renderLiveStatus();
 refreshQuotes().then(loadCandles);
 setInterval(refreshQuotes, 60_000);
 setInterval(() => { if (document.visibilityState === 'visible') loadCandles(); }, 60_000);

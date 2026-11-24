@@ -6,6 +6,7 @@
   "description": "Bilingual crypto market education and paper-trading practice app. No real orders or exchange keys.",
   "scripts": {
     "start": "node server.js",
+    "start:backend": "node backend/server.js",
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
