@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const PAGES = ['index.html', 'about.html', '404.html', 'labs/drone.html', 'labs/digits.html', 'labs/snake.html', 'labs/text.html'];
+const PAGES = ['index.html', 'about.html', '404.html', 'labs/drone.html', 'labs/digits.html', 'labs/snake.html', 'labs/text.html', 'crypto/index.html'];
 
 test('every local href/src in the pages exists', async () => {
   const missing = [];
@@ -17,7 +17,8 @@ test('every local href/src in the pages exists', async () => {
     for (const ref of refs) {
       if (/^(https?:|data:|mailto:|\/\/)/.test(ref) || ref.startsWith('#')) continue;
       const target = resolve(join(dir, ref.split('?')[0]));
-      const ok = await stat(target).then((s) => s.isFile()).catch(() => false);
+      const ok = await stat(target).then((s) => s.isFile()).catch(() => false)
+        || await stat(resolve(join(dir, 'public', ref))).then((s) => s.isFile()).catch(() => false);
       if (!ok) missing.push(`${page} -> ${ref}`);
     }
   }
@@ -35,6 +36,7 @@ test('every javascript module parses', async () => {
     }
   }
   await walk(join(ROOT, 'assets'));
+  await walk(join(ROOT, 'crypto'));
   await walk(join(ROOT, 'tests'));
   for (const file of files) {
     execFileSync(process.execPath, ['--check', file], { stdio: 'pipe' });
@@ -97,6 +99,13 @@ test('server serves pages, assets and a 404', async () => {
 
     const lab = await fetch(`${base}/labs/digits.html`);
     assert.equal(lab.status, 200);
+
+    const crypto = await fetch(`${base}/crypto/`);
+    assert.equal(crypto.status, 200);
+    assert.match(await crypto.text(), /SIMULATION ONLY/);
+    const manifest = await fetch(`${base}/crypto/manifest.webmanifest`);
+    assert.equal(manifest.status, 200);
+    assert.match(manifest.headers.get('content-type'), /manifest\+json/);
 
     const custom404 = await fetch(`${base}/404.html`);
     assert.equal(custom404.status, 200);

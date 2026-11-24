@@ -1,0 +1,62 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['**']
+    paths:
+      - 'crypto/**'
+      - 'android/**'
+      - 'capacitor.config.json'
+      - 'vite.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android-apk.yml'
+  pull_request:
+    paths:
+      - 'crypto/**'
+      - 'android/**'
+      - 'capacitor.config.json'
+      - 'vite.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android-apk.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    name: Build debug APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android platform
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Install web dependencies
+        run: npm ci
+      - name: Build web app and sync Capacitor assets
+        run: npm run android:sync
+      - name: Assemble debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+      - name: Upload installable debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: cryptolab-paper-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

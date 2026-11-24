@@ -1,0 +1,8 @@
+{
+  "appId": "lk.rusindu.cryptolab",
+  "appName": "CryptoLab Paper",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

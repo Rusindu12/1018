@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CryptoLab Paper</string>
+    <string name="title_activity_main">CryptoLab Paper</string>
+    <string name="package_name">lk.rusindu.cryptolab</string>
+    <string name="custom_url_scheme">lk.rusindu.cryptolab</string>
+</resources>

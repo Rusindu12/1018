@@ -1,23 +1,27 @@
 {
-  "name": "neuralab",
-  "version": "1.0.0",
+  "name": "neuralab-cryptolab",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "Three machine-learning experiments that train live in your browser — no cloud, no API keys.",
+  "description": "Bilingual crypto market education and paper-trading practice app. No real orders or exchange keys.",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test tests/*.test.mjs"
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node --test tests/*.test.mjs",
+    "test:crypto": "node --test tests/crypto*.test.mjs",
+    "android:sync": "npm run build && cap sync android"
   },
-  "engines": {
-    "node": ">=18"
-  },
+  "engines": { "node": ">=18" },
   "license": "Apache-2.0",
-  "keywords": [
-    "machine-learning",
-    "neural-network",
-    "neuroevolution",
-    "n-gram",
-    "sinhala",
-    "canvas"
-  ]
+  "keywords": ["crypto", "paper-trading", "market-analysis", "sinhala", "capacitor", "android"],
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3",
+    "vite": "^6.4.1"
+  }
 }

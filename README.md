@@ -1,5 +1,13 @@
 # NeuraLab · මොළයක් හදමු
 
+## CryptoLab — safe paper-trading practice
+
+This repository also includes a bilingual crypto-market practice app at [`crypto/`](crypto/). It reads public spot-market prices when available, explains a small transparent EMA/RSI rule, and offers a local paper account with simulated fees, risk sizing, a historical illustration, and a paper-only strategy runner. It is **not** a real trading bot and does not connect to an exchange account, store API keys, send orders, or promise profits. Sample data is marked when public market data cannot be reached.
+
+**Build the Android APK from GitHub:** every push to a branch with app changes runs **Build Android APK**. Open that run under **Actions** and download the `cryptolab-paper-debug-apk` artifact. You can also use **Run workflow** on a branch.  A debug APK is for sideloading/testing; it is not a Play Store-signed release. The workflow is defined in [`.github/workflows/android-apk.yml`](.github/workflows/android-apk.yml).
+
+For local development: `npm ci && npm run dev` opens the app at `/`; run `npm run android:sync` before an Android Studio/Gradle build. `npm run build` produces the web app in `dist/`.
+
 **Four machine-learning experiments that train live in your browser.**
 No cloud, no API keys, no pre-trained weights, no runtime dependencies.
 
@@ -52,9 +60,9 @@ npm start            # http://localhost:4173
 PORT=8080 npm start  # custom port
 ```
 
-`server.js` is a ~90-line static file server; no install step is required because there are no
-dependencies. You can also open the pages with any static server (`python3 -m http.server`), since all
-modules are plain ES modules. Serving over HTTP is required — `file://` blocks module imports.
+`server.js` remains a zero-dependency static server for NeuraLab and the source-mode CryptoLab page.
+For Android/web production builds, install the pinned toolchain with `npm ci`. You can also serve the
+static pages with `python3 -m http.server`; use an HTTP server because `file://` blocks ES module imports.
 
 ## Tests
 
@@ -62,7 +70,7 @@ modules are plain ES modules. Serving over HTTP is required — `file://` blocks
 npm test
 ```
 
-40 tests cover the numerical core, both evolutions, the language model, the digit dataset, a numerical
+46 tests cover the neural-network numerical core, both evolutions, the language model, the digit dataset, paper-trading indicators/backtesting, a numerical
 gradient check of the CNN's hand-written convolution backprop, a static link audit, a syntax check of
 every module, and a real HTTP smoke test of the server.
 

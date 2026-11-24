@@ -15,6 +15,7 @@ const MIME = {
   '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
@@ -68,6 +69,12 @@ const server = createServer(async (req, res) => {
   }
 
   if (pathname.endsWith('/')) pathname += 'index.html';
+  // Vite's public assets live below crypto/public during source development,
+  // while the production build copies them to the app root.
+  const cryptoAssetName = pathname.split('/').at(-1);
+  if (pathname.startsWith('/crypto/') && ['manifest.webmanifest', 'icon.svg', 'sw.js'].includes(cryptoAssetName)) {
+    pathname = `/crypto/public/${cryptoAssetName}`;
+  }
   const filePath = resolve(join(ROOT, normalize(pathname)));
 
   if (filePath !== ROOT && !filePath.startsWith(ROOT + sep)) {
