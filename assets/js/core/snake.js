@@ -273,7 +273,9 @@ export class SnakeEvolution {
         const b = pickTournament(sorted, rng).brain;
         next.push(breed(a, b, rng, this.mutationRate, this.mutationScale));
       } else {
-        next.push(new SnakeBrain());
+        // Seed the initial population too; previously these genomes used Math.random()
+        // and made the evolution result (and its test) nondeterministic.
+        next.push(new SnakeBrain(undefined, null, rng));
       }
     }
     this.games = next.map((brain, i) => {

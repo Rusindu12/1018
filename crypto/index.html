@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
-  <meta name="description" content="A bilingual crypto market analysis and paper-trading simulator. Practice safely with live public market data; no real orders or keys.">
+  <meta name="description" content="Crypto market analysis and paper trading, with optional manually confirmed Binance Spot orders through your own secured private backend. Binance secrets stay server-side.">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <title>CryptoLab — Market practice</title>
@@ -20,8 +20,8 @@
     <div class="spacer"></div><div class="status off" id="connection"><i></i><span id="connectionText">Connecting to public prices…</span></div>
     <button class="install" id="installBtn">Install app</button><button class="lang" id="langBtn" aria-label="Change language">සිංහල</button>
   </header>
-  <section class="hero"><h1 id="headline">A calmer way to learn crypto markets.</h1><p id="subhead">Review public market data, understand transparent technical signals, and practice in a paper account. Nothing here can place a real trade.</p>
-    <div class="safety" id="safety">⚠️ <b>Practice mode only.</b> Crypto is volatile and losses can exceed expectations. Signals are educational, not financial advice or predictions. Prices may be delayed; paper fills are simulated.</div>
+  <section class="hero"><h1 id="headline">A calmer way to learn crypto markets.</h1><p id="subhead">Review public market data, understand transparent indicators and practice on a paper account. Optional Binance Spot orders require your own secure backend and manual confirmation.</p>
+    <div class="safety" id="safety">⚠️ <b>High-risk asset.</b> Signals are educational, not financial advice or predictions. Paper trades are simulated. If you configure live mode on your private backend, confirmed orders use real funds and can lose money.</div>
   </section>
   <nav class="nav" aria-label="Main navigation"><button class="active" data-view="market" id="tabMarket">◉ &nbsp;Markets</button><button data-view="analysis" id="tabAnalysis">⌁ &nbsp;Analysis</button><button data-view="paper" id="tabPaper">▣ &nbsp;Paper trade</button><button data-view="journal" id="tabJournal">≡ &nbsp;Journal</button></nav>
 
@@ -37,7 +37,7 @@
         <article class="card"><h2>Markets <span class="tag">Public data</span></h2><div id="marketsList" class="loading">Loading market data…</div></article>
       </div>
       <div class="stack">
-        <article class="card"><h2>Rule-based market read</h2><div id="signalBox"><div class="loading">Waiting for enough candles…</div></div><div class="callout" style="margin-top:13px">A score is a summary of indicator agreement—not a probability of profit. It can be wrong, especially in fast or illiquid markets.</div></article>
+        <article class="card"><h2>Explainable multi-factor signal</h2><div id="signalBox"><div class="loading">Waiting for enough candles…</div></div><div class="callout" style="margin-top:13px">A score is a summary of indicator agreement—not a probability of profit. It can be wrong, especially in fast or illiquid markets.</div></article>
         <article class="card"><h2>Risk snapshot</h2><div id="riskSummary" class="small muted">Paper account is isolated from exchanges.</div><div class="divider"></div><div class="btnrow"><button class="btn primary full" data-goto="paper">Open paper account</button></div></article>
       </div>
     </div>
@@ -45,9 +45,9 @@
 
   <section class="view" id="view-analysis">
     <div class="grid">
-      <div class="stack"><article class="card"><h2>What is driving the signal?</h2><div id="analysisBody" class="loading">Loading indicators…</div></article>
-        <article class="card"><h2>Simple historical check</h2><p class="small muted">Illustrative backtest on the candles loaded above. It applies the same moving-average/RSI rule with a 0.1% fee per side. It does not predict future results and ignores liquidity, spread, taxes and execution delays.</p><button class="btn primary" id="backtestBtn">Run recent-candle test</button><div id="backtestResult" class="callout hide" style="margin-top:12px"></div></article></div>
-      <div class="stack"><article class="card"><h2>Indicator guide</h2><table class="table"><tr><td><b>EMA</b></td><td>Smoothed trend reference. Crossovers lag price.</td></tr><tr><td><b>RSI</b></td><td>Recent momentum on a 0–100 scale; extremes can persist.</td></tr><tr><td><b>Trend</b></td><td>EMA 9 compared with EMA 21 and recent price momentum.</td></tr><tr><td><b>Signal score</b></td><td>Weighted rule agreement, not a trained trading AI.</td></tr></table></article><article class="card"><h2>Data & limitations</h2><p class="small muted">Prices are fetched from Binance's public spot market endpoints when available. This app sends no account credentials and cannot submit orders. A fallback sample is shown if public data is unreachable, and is clearly labelled.</p></article></div>
+      <div class="stack"><article class="card"><h2>Factor-by-factor explanation</h2><div id="analysisBody" class="loading">Loading indicators…</div></article>
+        <article class="card"><h2>Simple historical check</h2><p class="small muted">Walk-forward illustration: each signal uses only candles available before the simulated fill; orders enter at the next bar open, with 0.1% fees and 0.05% slippage per side plus a volatility-adjusted stop. It still ignores order-book depth, outages, taxes and many real execution effects. Historical results do not predict future performance.</p><button class="btn primary" id="backtestBtn">Run recent-candle test</button><div id="backtestResult" class="callout hide" style="margin-top:12px"></div></article></div>
+      <div class="stack"><article class="card"><h2>Indicator guide</h2><table class="table"><tr><td><b>EMA 9/21/50</b></td><td>Trend stack; crossovers lag price and can whipsaw.</td></tr><tr><td><b>RSI (14)</b></td><td>Momentum range; extremes can persist in strong trends.</td></tr><tr><td><b>MACD</b></td><td>EMA momentum and histogram direction.</td></tr><tr><td><b>Volume</b></td><td>Recent activity versus its prior 20-candle average.</td></tr><tr><td><b>ATR</b></td><td>Recent price range; a high-volatility guard can force WAIT.</td></tr><tr><td><b>Agreement</b></td><td>Weighted rule alignment, not a probability or trained predictive model.</td></tr></table></article><article class="card"><h2>Data & limitations</h2><p class="small muted">Prices use Binance public spot endpoints when reachable. The APK never receives Binance API keys; optional orders go through your separately secured private backend and require manual confirmation. A fallback sample is clearly labelled if public data is unavailable.</p></article></div>
     </div>
   </section>
 
@@ -76,7 +76,7 @@
   </section>
 
   <section class="view" id="view-journal"><div class="grid"><div class="stack"><article class="card"><h2>Paper trade history</h2><div id="historyList" class="empty">No completed paper trades yet.</div></article></div><div class="stack"><article class="card"><h2>Practice rules</h2><ol class="small muted"><li>Decide the amount you can risk before entering.</li><li>Keep the paper account separate from real funds.</li><li>Include fees; do not mistake a winning sample for an edge.</li><li>Stop if you feel pressured to chase a loss.</li></ol></article></div></div></section>
-  <footer class="footer">CryptoLab · Educational practice tool · No exchange connection, real orders, financial advice, or profit guarantee.</footer>
+  <footer class="footer">CryptoLab · Educational signals · Exchange orders only through your private backend after manual confirmation · No profit guarantee.</footer>
 </div>
 <div class="toast" id="toast" role="status"></div>
 <script type="module" src="./app.js"></script>

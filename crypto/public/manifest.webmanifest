@@ -1,7 +1,7 @@
 {
-  "name": "CryptoLab Paper Trading",
+  "name": "CryptoLab Spot & Paper Practice",
   "short_name": "CryptoLab",
-  "description": "Bilingual crypto market analysis and paper trading practice. No real orders.",
+  "description": "Crypto market analysis and paper practice, with optional manually confirmed Binance Spot orders through your private backend.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
